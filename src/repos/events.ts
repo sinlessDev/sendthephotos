@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
+import type { Deps } from "../deps.ts";
 import { events } from "../schema.ts";
-import type { DB } from "../db.ts";
 
-export async function findEventByID({ db }: { db: DB }, eventID: string) {
-  const event = await db.query.events.findFirst({
+export async function findEventByID(deps: Pick<Deps, "db">, eventID: string) {
+  const event = await deps.db.query.events.findFirst({
     where: eq(events.id, eventID),
     with: {
       uploads: {

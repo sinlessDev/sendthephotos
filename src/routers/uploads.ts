@@ -1,27 +1,20 @@
 import { FileStore } from "@tus/file-store";
 import { Server } from "@tus/server";
 import { Router } from "express";
-import { type Config } from "../config.ts";
-import type { DB } from "../db.ts";
 import { randomUUID } from "node:crypto";
+import type { Deps } from "../deps.ts";
 import { insertUpload } from "../repos/uploads.ts";
 
 const EVENT_ID_HEADER_NAME = "X-Event-ID";
 
-export function createUploadsRouter({
-  config,
-  db,
-}: {
-  config: Config;
-  db: DB;
-}) {
+export function createUploadsRouter(deps: Deps) {
   const router = Router();
 
   const server = new Server({
     path: "/api/uploads",
     relativeLocation: true,
     datastore: new FileStore({
-      directory: config.fileStoreDirPath,
+      directory: deps.config.fileStoreDirPath,
     }),
     namingFunction(req) {
       const id = randomUUID();
@@ -57,15 +50,12 @@ export function createUploadsRouter({
         throw new Error("File upload failed: File name is missing");
       }
 
-      await insertUpload(
-        { db },
-        {
-          id: upload.id,
-          name: fileName,
-          url: `/api/uploads/${upload.id}`,
-          eventId: eventID,
-        }
-      );
+      await insertUpload(deps, {
+        id: upload.id,
+        name: fileName,
+        url: `/api/uploads/${upload.id}`,
+        eventId: eventID,
+      });
 
       return { status_code: 204 };
     },

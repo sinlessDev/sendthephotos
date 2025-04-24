@@ -9,13 +9,14 @@ declare global {
   }
 }
 
-const config = Object.freeze({
-  enableHttpRequestLogging: process.env.ENABLE_HTTP_REQUEST_LOGGING === "true",
-  databaseURL: process.env.DATABASE_URL,
-  fileStoreDirPath: process.env.FILE_STORE_DIR_PATH,
-  serveResources: process.env.SERVE_RESOURCES === "true",
-});
+export function createConfig() {
+  return Object.freeze({
+    enableHttpRequestLogging:
+      process.env.ENABLE_HTTP_REQUEST_LOGGING === "true",
+    databaseURL: process.env.DATABASE_URL,
+    fileStoreDirPath: process.env.FILE_STORE_DIR_PATH,
+    serveResources: process.env.SERVE_RESOURCES === "true",
+  });
+}
 
-export type Config = typeof config;
-
-export default config;
+export type Config = ReturnType<typeof createConfig>;

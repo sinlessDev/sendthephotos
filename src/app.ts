@@ -1,21 +1,20 @@
 import express from "express";
-import { type Config } from "./config.ts";
-import type { DB } from "./db.ts";
+import { type Deps } from "./deps.ts";
 import { createEventsRouter } from "./routers/events.ts";
 import { createUploadsRouter } from "./routers/uploads.ts";
 
-export async function createApp({ config, db }: { config: Config; db: DB }) {
+export async function createApp(deps: Deps) {
   const app = express();
 
   app.use(express.json());
 
-  if (config.enableHttpRequestLogging) {
+  if (deps.config.enableHttpRequestLogging) {
     const { default: morgan } = await import("morgan");
 
     app.use(morgan("tiny"));
   }
 
-  if (config.serveResources) {
+  if (deps.config.serveResources) {
     const path = await import("node:path");
     const { default: compression } = await import("compression");
 
@@ -31,8 +30,8 @@ export async function createApp({ config, db }: { config: Config; db: DB }) {
     });
   }
 
-  app.use("/api/uploads", createUploadsRouter({ config, db }));
-  app.use("/api/events", createEventsRouter({ db }));
+  app.use("/api/uploads", createUploadsRouter(deps));
+  app.use("/api/events", createEventsRouter(deps));
 
   return app;
 }

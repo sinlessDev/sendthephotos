@@ -2,20 +2,31 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Run dev server",
+      "label": "Run server",
       "type": "shell",
-      "command": "pnpm dev"
+      "command": "pnpm dev",
+      "problemMatcher": []
     },
     {
       "label": "Serve resources",
       "type": "shell",
-      "command": "cd resources && pnpm vite dev"
+      "command": "cd resources && pnpm vite dev",
+      "problemMatcher": []
     },
     {
-      "label": "Dev",
-      "dependsOn": ["Run dev server", "Serve resources"],
+      "label": "Run dev",
+      "dependsOn": ["Run server", "Serve resources"],
       "dependsOrder": "parallel",
       "problemMatcher": []
+    },
+    {
+      "label": "Push db",
+      "type": "shell",
+      "command": "pnpm drizzle-kit push",
+      "problemMatcher": [],
+      "presentation": {
+        "focus": true
+      }
     }
   ]
 }

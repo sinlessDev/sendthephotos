@@ -1,13 +1,7 @@
 import { createApp } from "./app.ts";
-import config from "./config.ts";
-import { createDBConn } from "./db.ts";
+import { createDeps } from "./deps.ts";
 
-const db = createDBConn(config);
-
-const deps = Object.freeze({
-  config,
-  db,
-});
+const deps = createDeps();
 
 const app = await createApp(deps);
 
