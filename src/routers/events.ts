@@ -3,13 +3,13 @@ import type { DB } from "../db.ts";
 import { uploadsTable } from "../schema.ts";
 import { eq } from "drizzle-orm";
 
-export function createEventsRouter(deps: { db: DB }) {
+export function createEventsRouter({ db }: { db: DB }) {
   const router = Router();
 
   router.get("/:eventID", async (req, res) => {
     const { eventID } = req.params;
 
-    const uploads = await deps.db
+    const uploads = await db
       .select({
         name: uploadsTable.name,
         size: uploadsTable.size,

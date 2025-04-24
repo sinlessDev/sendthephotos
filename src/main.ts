@@ -2,11 +2,14 @@ import { createApp } from "./app.ts";
 import config from "./config.ts";
 import { createDBConn } from "./db.ts";
 
+const db = createDBConn(config);
+
 const deps = Object.freeze({
-  db: createDBConn(config),
+  config,
+  db,
 });
 
-const app = await createApp(config, deps);
+const app = await createApp(deps);
 
 const server = app.listen(3000, "localhost", () => {
   console.info("Server is running on port 3000");

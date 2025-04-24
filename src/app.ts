@@ -1,10 +1,10 @@
 import express from "express";
 import { type Config } from "./config.ts";
-import { createUploadsRouter } from "./routers/uploads.ts";
 import type { DB } from "./db.ts";
 import { createEventsRouter } from "./routers/events.ts";
+import { createUploadsRouter } from "./routers/uploads.ts";
 
-export async function createApp(config: Config, deps: { db: DB }) {
+export async function createApp({ config, db }: { config: Config; db: DB }) {
   const app = express();
 
   app.use(express.json());
@@ -31,8 +31,8 @@ export async function createApp(config: Config, deps: { db: DB }) {
     });
   }
 
-  app.use("/api/uploads", createUploadsRouter(config, deps));
-  app.use("/api/events", createEventsRouter(deps));
+  app.use("/api/uploads", createUploadsRouter({ config, db }));
+  app.use("/api/events", createEventsRouter({ db }));
 
   return app;
 }

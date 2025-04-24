@@ -6,7 +6,13 @@ import type { DB } from "../db.ts";
 import { uploadsTable } from "../schema.ts";
 import util from "node:util";
 
-export function createUploadsRouter(config: Config, deps: { db: DB }) {
+export function createUploadsRouter({
+  config,
+  db,
+}: {
+  config: Config;
+  db: DB;
+}) {
   const router = Router();
 
   const server = new Server({
@@ -24,7 +30,7 @@ export function createUploadsRouter(config: Config, deps: { db: DB }) {
       }
 
       try {
-        await deps.db.insert(uploadsTable).values({
+        await db.insert(uploadsTable).values({
           id: upload.id,
           name: upload.metadata!.filename,
           size: upload.size,
