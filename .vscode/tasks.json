@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run dev server",
+      "type": "shell",
+      "command": "pnpm dev"
+    },
+    {
+      "label": "Serve resources",
+      "type": "shell",
+      "command": "cd resources && pnpm vite dev"
+    },
+    {
+      "label": "Dev",
+      "dependsOn": ["Run dev server", "Serve resources"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}
