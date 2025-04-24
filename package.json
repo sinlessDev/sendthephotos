@@ -10,6 +10,7 @@
     "drizzle-orm": "^0.42.0",
     "express": "^4.21.2",
     "morgan": "^1.10.0",
+    "srvx": "file:srvx-0.5.2.tgz",
     "valibot": "^1.0.0"
   },
   "devDependencies": {
@@ -24,5 +25,10 @@
     "drizzle-kit": "^0.31.0",
     "typescript": "^5.8.3"
   },
-  "packageManager": "pnpm@10.8.1"
+  "packageManager": "pnpm@10.8.1",
+  "pnpm": {
+    "overrides": {
+      "srvx": "file:./srvx-0.5.2.tgz"
+    }
+  }
 }
