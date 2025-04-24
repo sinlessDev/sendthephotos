@@ -4,7 +4,8 @@ import { Router } from "express";
 import { type Config } from "../config.ts";
 import type { DB } from "../db.ts";
 import { uploadsTable } from "../schema.ts";
-import util from "node:util";
+
+const eventIdHeaderName = "X-Event-ID";
 
 export function createUploadsRouter({
   config,
@@ -21,13 +22,20 @@ export function createUploadsRouter({
     datastore: new FileStore({
       directory: config.fileStoreDirPath,
     }),
-    async onUploadFinish(req, upload) {
-      console.log(util.inspect(upload, { depth: null, colors: true }));
-      const eventID = req.headers.get("X-Event-ID");
-
-      if (!eventID) {
-        throw new Error("Event ID can't be missing");
+    async onUploadCreate(req, upload) {
+      if (!req.headers.get(eventIdHeaderName)) {
+        throw {
+          status_code: 400,
+          body: "Event ID can't be missing",
+        };
       }
+
+      return {
+        metadata: upload["metadata"],
+      };
+    },
+    async onUploadFinish(req, upload) {
+      const eventID = req.headers.get(eventIdHeaderName);
 
       try {
         await db.insert(uploadsTable).values({
