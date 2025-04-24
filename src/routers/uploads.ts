@@ -7,7 +7,8 @@ export function createUploadsRouter(config: Config) {
   const router = Router();
 
   const server = new Server({
-    path: "/uploads",
+    path: "/api/uploads",
+    relativeLocation: true,
     datastore: new FileStore({
       directory: config.fileStoreDirPath,
     }),

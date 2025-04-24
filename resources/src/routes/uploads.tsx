@@ -1,38 +1,8 @@
 import { AlertCircleIcon, ImageIcon, UploadIcon, XIcon } from "lucide-react";
+import { Upload } from "tus-js-client";
 
 import { useFileUpload } from "#hooks/use-file-upload";
 import { Button } from "#components/ui/button";
-
-const initialFiles = [
-  {
-    name: "image-01.jpg",
-    size: 1528737,
-    type: "image/jpeg",
-    url: "https://picsum.photos/1000/800?grayscale&random=1",
-    id: "image-01-123456789",
-  },
-  {
-    name: "image-02.jpg",
-    size: 1528737,
-    type: "image/jpeg",
-    url: "https://picsum.photos/1000/800?grayscale&random=2",
-    id: "image-02-123456789",
-  },
-  {
-    name: "image-03.jpg",
-    size: 1528737,
-    type: "image/jpeg",
-    url: "https://picsum.photos/1000/800?grayscale&random=3",
-    id: "image-03-123456789",
-  },
-  {
-    name: "image-04.jpg",
-    size: 1528737,
-    type: "image/jpeg",
-    url: "https://picsum.photos/1000/800?grayscale&random=4",
-    id: "image-04-123456789",
-  },
-];
 
 export function UploadsRoute() {
   const maxSizeMB = 5;
@@ -55,11 +25,44 @@ export function UploadsRoute() {
     maxSize,
     multiple: true,
     maxFiles,
-    initialFiles,
+    onFilesAdded(files) {
+      for (const { file } of files) {
+        if (file instanceof File) {
+          const upload = new Upload(file, {
+            endpoint: "/api/uploads/",
+            retryDelays: [0, 3000, 5000, 10000, 20000],
+            metadata: {
+              filename: file.name,
+              filetype: file.type,
+            },
+            onError(error) {
+              console.log("Failed because: " + error);
+            },
+            onProgress(bytesUploaded, bytesTotal) {
+              const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(
+                2
+              );
+              console.log(bytesUploaded, bytesTotal, percentage + "%");
+            },
+            onSuccess() {
+              console.log("Download from", upload.url);
+            },
+          });
+
+          upload.findPreviousUploads().then((previousUploads) => {
+            if (previousUploads.length) {
+              upload.resumeFromPreviousUpload(previousUploads[0]);
+            }
+
+            upload.start();
+          });
+        }
+      }
+    },
   });
 
   return (
-    <div className="flex flex-col gap-2 max-w-2xl mx-auto mt-12">
+    <div className="flex flex-col gap-2 max-w-2xl mx-auto m-4 h-screen">
       {/* Drop area */}
       <div
         onDragEnter={handleDragEnter}
