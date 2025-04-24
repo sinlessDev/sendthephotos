@@ -6,7 +6,7 @@ export type Deps = {
   config: Config;
 };
 
-export function createDeps(): Deps {
+export function createDeps(): Readonly<Deps> {
   const config = createConfig();
   const db = createDB({ config });
 

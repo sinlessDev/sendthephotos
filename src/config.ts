@@ -5,6 +5,8 @@ declare global {
       DATABASE_URL: string;
       FILE_STORE_DIR_PATH: string;
       SERVE_RESOURCES: string;
+      HOST: string;
+      PORT: string;
     }
   }
 }
@@ -16,6 +18,8 @@ export function createConfig() {
     databaseURL: process.env.DATABASE_URL,
     fileStoreDirPath: process.env.FILE_STORE_DIR_PATH,
     serveResources: process.env.SERVE_RESOURCES === "true",
+    host: process.env.HOST,
+    port: parseInt(process.env.PORT, 10),
   });
 }
 
