@@ -1,13 +1,42 @@
 import { AlertCircleIcon, ImageIcon, UploadIcon, XIcon } from "lucide-react";
 import { Upload } from "tus-js-client";
 
-import { useFileUpload } from "#hooks/use-file-upload";
+import { type FileMetadata, useFileUpload } from "#hooks/use-file-upload";
 import { Button } from "#components/ui/button";
+import { useParams } from "react-router";
+import { useEffect, useState } from "react";
 
 export function UploadsRoute() {
+  const { eventID } = useParams();
+  const [uploads, setUploads] = useState<FileMetadata[]>([]);
+
+  if (!eventID) {
+    throw new Error("Event ID can't be missing");
+  }
+
   const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
   const maxFiles = 6;
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch(`/api/events/${eventID}`, { signal: controller.signal })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.uploads);
+        setUploads(data.uploads);
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          return;
+        }
+
+        throw err;
+      });
+
+    return () => controller.abort("Aborted because component unmounted");
+  }, [eventID]);
 
   const [
     { files, isDragging, errors },
@@ -25,6 +54,7 @@ export function UploadsRoute() {
     maxSize,
     multiple: true,
     maxFiles,
+    initialFiles: uploads,
     onFilesAdded(files) {
       for (const { file } of files) {
         if (file instanceof File) {
@@ -34,6 +64,9 @@ export function UploadsRoute() {
             metadata: {
               filename: file.name,
               filetype: file.type,
+            },
+            headers: {
+              "X-Event-ID": eventID,
             },
             onError(error) {
               console.log("Failed because: " + error);

@@ -2,6 +2,7 @@ import express from "express";
 import { type Config } from "./config.ts";
 import { createUploadsRouter } from "./routers/uploads.ts";
 import type { DB } from "./db.ts";
+import { createEventsRouter } from "./routers/events.ts";
 
 export async function createApp(config: Config, deps: { db: DB }) {
   const app = express();
@@ -19,18 +20,19 @@ export async function createApp(config: Config, deps: { db: DB }) {
     const { default: compression } = await import("compression");
 
     app.use(
-      express.static(path.join(import.meta.dirname, "..", "resources", "dist")),
+      express.static(path.join(import.meta.dirname, "..", "resources", "dist"))
     );
     app.use(compression());
 
     app.get("{*splat}", (req, res) => {
       res.sendFile(
-        path.join(import.meta.dirname, "..", "resources", "dist", "index.html"),
+        path.join(import.meta.dirname, "..", "resources", "dist", "index.html")
       );
     });
   }
 
-  app.use("/api/uploads", createUploadsRouter(config));
+  app.use("/api/uploads", createUploadsRouter(config, deps));
+  app.use("/api/events", createEventsRouter(deps));
 
   return app;
 }
