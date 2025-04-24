@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  srvx: file:./vendor/srvx-0.5.2.tgz
+  srvx: file:./vendor/srvx@0.5.3.tgz
 
 importers:
 
@@ -936,8 +936,8 @@ packages:
     resolution: {integrity: sha512-D76uU73ulSXrD1UXF4KE2TMxVVwhsnCgfAyTg9k8P6KGZjlXKrOLe4dJQKI3Bxi5wjesZoFXJWElNWBjPZMbhg==}
     engines: {node: '>=6.6.0'}
 
-  cookie@0.7.1:
-    resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
+  cookie@0.7.2:
+    resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
 
   cookie@1.0.2:
@@ -1618,8 +1618,8 @@ packages:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
 
-  srvx@file:vendor/srvx-0.5.2.tgz:
-    resolution: {integrity: sha512-vsuzL7MHXSmR48y8/9bXnd0VHtznhK6lzZqij0H+Io2iTU76nwAP5ES0OoE3eEWHmWLETJ0a3QGkBsrcdwmOwA==, tarball: file:vendor/srvx-0.5.2.tgz}
+  srvx@file:vendor/srvx@0.5.3.tgz:
+    resolution: {integrity: sha512-vsuzL7MHXSmR48y8/9bXnd0VHtznhK6lzZqij0H+Io2iTU76nwAP5ES0OoE3eEWHmWLETJ0a3QGkBsrcdwmOwA==, tarball: file:vendor/srvx@0.5.3.tgz}
     version: 0.5.2
     engines: {node: '>=20.11.1'}
 
@@ -2230,7 +2230,7 @@ snapshots:
       debug: 4.4.0
       lodash.throttle: 4.1.1
       set-cookie-parser: 2.7.1
-      srvx: file:vendor/srvx-0.5.2.tgz
+      srvx: file:vendor/srvx@0.5.3.tgz
     optionalDependencies:
       '@redis/client': 1.6.0
       ioredis: 5.6.1
@@ -2397,7 +2397,7 @@ snapshots:
 
   cookie-signature@1.2.2: {}
 
-  cookie@0.7.1: {}
+  cookie@0.7.2: {}
 
   cookie@1.0.2: {}
 
@@ -2566,7 +2566,7 @@ snapshots:
       body-parser: 2.2.0
       content-disposition: 1.0.0
       content-type: 1.0.5
-      cookie: 0.7.1
+      cookie: 0.7.2
       cookie-signature: 1.2.2
       debug: 4.4.0
       encodeurl: 2.0.0
@@ -3072,7 +3072,7 @@ snapshots:
 
   source-map@0.6.1: {}
 
-  srvx@file:vendor/srvx-0.5.2.tgz:
+  srvx@file:vendor/srvx@0.5.3.tgz:
     dependencies:
       cookie-es: 2.0.0
 
