@@ -3,6 +3,9 @@
   "compilerOptions": {
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": {
+      "#components/*": ["./src/components/*.ts", "./src/components/*.tsx"]
+    }
   }
 }
