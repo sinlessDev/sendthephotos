@@ -1,5 +1,5 @@
 import type { DB } from "../db.ts";
-import { uploads } from "../schema.ts";
+import { uploads } from "../db.ts";
 
 type InsertingUpload = typeof uploads.$inferInsert;
 

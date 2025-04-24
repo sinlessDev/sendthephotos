@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { DB } from "../db.ts";
-import { events } from "../schema.ts";
+import { events } from "../db.ts";
 
 export async function findEventByID(db: DB, eventID: string) {
   const event = await db.query.events.findFirst({
