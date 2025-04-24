@@ -29,9 +29,6 @@ importers:
       morgan:
         specifier: ^1.10.0
         version: 1.10.0
-      srvx:
-        specifier: file:srvx-0.5.2.tgz
-        version: file:srvx-0.5.2.tgz
       valibot:
         specifier: ^1.0.0
         version: 1.0.0(typescript@5.8.3)
