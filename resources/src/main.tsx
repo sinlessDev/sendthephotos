@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import "./main.css";
+import { UploadsRoute } from "./routes/uploads.tsx";
 
 const rootEl = document.getElementById("root");
 
@@ -17,6 +18,7 @@ createRoot(rootEl).render(
           path="/"
           element={<h1 className="text-3xl font-serif">Hello World</h1>}
         />
+        <Route path="/:eventID" element={<UploadsRoute />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
