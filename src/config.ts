@@ -10,6 +10,7 @@ const literallyBoolean = v.custom((value) => {
 const envSchema = v.object({
   ENABLE_HTTP_REQUEST_LOGGING: literallyBoolean,
   DATABASE_URL: v.string(),
+  FILE_STORE_DIR_PATH: v.string(),
 });
 
 const env = v.parse(envSchema, process.env);
@@ -17,6 +18,7 @@ const env = v.parse(envSchema, process.env);
 const config = Object.freeze({
   enableHttpRequestLogging: env.ENABLE_HTTP_REQUEST_LOGGING,
   databaseUrl: env.DATABASE_URL,
+  fileStoreDirectoryPath: env.FILE_STORE_DIR_PATH,
 });
 
 export default config;

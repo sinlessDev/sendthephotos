@@ -1,12 +1,14 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "dotenvx run -- node --import @swc-node/register/esm-register ./src/main.ts"
+    "dev": "dotenvx run -- node --import @swc-node/register/esm-register --watch ./src/main.ts"
   },
   "dependencies": {
+    "@tus/file-store": "^2.0.0",
+    "@tus/server": "^2.1.0",
     "better-sqlite3": "^11.9.1",
     "drizzle-orm": "^0.42.0",
-    "express": "^5.1.0",
+    "express": "^4.21.2",
     "morgan": "^1.10.0",
     "valibot": "^1.0.0"
   },

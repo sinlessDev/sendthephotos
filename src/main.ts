@@ -1,6 +1,6 @@
 import app from "./app.ts";
 
-const server = app.listen(3000, () => {
+const server = app.listen(3000, "localhost", () => {
   console.info("Server is running on port 3000");
 });
 
