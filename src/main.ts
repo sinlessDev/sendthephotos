@@ -3,7 +3,7 @@ import { createEnvConf } from "./config.ts";
 import { createDB } from "./db.ts";
 
 const conf = createEnvConf();
-const db = createDB({ conf });
+const db = createDB(conf);
 const app = await createApp({ conf, db });
 
 const server = app.listen(conf.port, conf.host, () => {

@@ -1,13 +1,12 @@
 import express from "express";
 import { type Conf } from "./config.ts";
-import { type DB } from "./db.ts";
-import { createEventsRouter } from "./routers/events.ts";
-import { createUploadsRouter } from "./routers/uploads.ts";
+import { createEventsRouter, type EventsDeps } from "./routers/events.ts";
+import { createUploadsRouter, type UploadsDeps } from "./routers/uploads.ts";
 
 type AppDeps = {
   conf: Conf;
-  db: DB;
-};
+} & UploadsDeps &
+  EventsDeps;
 
 export async function createApp(deps: AppDeps) {
   const app = express();
