@@ -21,4 +21,6 @@ const config = Object.freeze({
   fileStoreDirectoryPath: env.FILE_STORE_DIR_PATH,
 });
 
+export type Config = typeof config;
+
 export default config;
