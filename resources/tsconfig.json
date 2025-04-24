@@ -5,7 +5,9 @@
     "moduleResolution": "nodenext",
     "types": ["vite/client"],
     "paths": {
-      "#components/*": ["./src/components/*.ts", "./src/components/*.tsx"]
+      "#components/*": ["./src/components/*.ts", "./src/components/*.tsx"],
+      "#lib/*": ["./src/lib/*.ts", "./src/lib/*.tsx"],
+      "#hooks/*": ["./src/hooks/*.ts", "./src/hooks/*.tsx"]
     }
   }
 }
