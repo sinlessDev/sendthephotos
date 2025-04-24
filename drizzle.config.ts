@@ -1,11 +1,13 @@
 import { defineConfig } from "drizzle-kit";
-import config from "./src/config.ts";
+import { createEnvConf } from "./src/config.ts";
+
+const conf = createEnvConf();
 
 export default defineConfig({
   out: "./drizzle",
   schema: "./src/schema.ts",
   dialect: "sqlite",
   dbCredentials: {
-    url: config.databaseURL,
+    url: conf.databaseURL,
   },
 });

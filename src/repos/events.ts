@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
-import type { Deps } from "../deps.ts";
+import type { DB } from "../db.ts";
 import { events } from "../schema.ts";
 
-export async function findEventByID(deps: Pick<Deps, "db">, eventID: string) {
-  const event = await deps.db.query.events.findFirst({
+export async function findEventByID(db: DB, eventID: string) {
+  const event = await db.query.events.findFirst({
     where: eq(events.id, eventID),
     with: {
       uploads: {
@@ -21,4 +21,14 @@ export async function findEventByID(deps: Pick<Deps, "db">, eventID: string) {
   }
 
   return event;
+}
+
+type InsertingEvent = typeof events.$inferInsert;
+
+export async function insertEvent(db: DB, event: InsertingEvent) {
+  const [insertedEvent] = await db.insert(events).values(event).returning({
+    id: events.id,
+  });
+
+  return insertedEvent.id;
 }

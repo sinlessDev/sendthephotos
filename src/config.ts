@@ -1,3 +1,12 @@
+export type Conf = Readonly<{
+  enableHttpRequestLogging: boolean;
+  databaseURL: string;
+  fileStoreDirPath: string;
+  serveResources: boolean;
+  host: string;
+  port: number;
+}>;
+
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
@@ -11,7 +20,7 @@ declare global {
   }
 }
 
-export function createConfig() {
+export function createEnvConf(): Conf {
   return Object.freeze({
     enableHttpRequestLogging:
       process.env.ENABLE_HTTP_REQUEST_LOGGING === "true",
@@ -22,5 +31,3 @@ export function createConfig() {
     port: parseInt(process.env.PORT, 10),
   });
 }
-
-export type Config = ReturnType<typeof createConfig>;

@@ -1,13 +1,13 @@
 import { createApp } from "./app.ts";
-import { createDeps } from "./deps.ts";
+import { createEnvConf } from "./config.ts";
+import { createDB } from "./db.ts";
 
-const deps = createDeps();
-const app = await createApp(deps);
+const conf = createEnvConf();
+const db = createDB({ conf });
+const app = await createApp({ conf, db });
 
-const server = app.listen(deps.config.port, deps.config.host, () => {
-  console.info(
-    `Server: Server is running on http://${deps.config.host}:${deps.config.port}`
-  );
+const server = app.listen(conf.port, conf.host, () => {
+  console.info(`Server: Server is running on http://${conf.host}:${conf.port}`);
 });
 
 ["SIGINT", "SIGTERM"].forEach((signal) => {
