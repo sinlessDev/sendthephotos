@@ -1,16 +1,19 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "node --import @swc-node/register/esm-register ./src/main.ts"
+    "dev": "dotenvx run -- node --import @swc-node/register/esm-register ./src/main.ts"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^1.41.0",
     "@swc-node/register": "^1.10.10",
     "@tsconfig/node-ts": "^23.6.1",
     "@tsconfig/node22": "^22.0.1",
     "@types/express": "^5.0.1",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^22.14.1",
     "typescript": "^5.8.3"
   },
