@@ -1,6 +1,10 @@
 import { drizzle } from "drizzle-orm/better-sqlite3";
-import config from "./config.ts";
+import { type Config } from "./config.ts";
 
-const db = drizzle(config.databaseUrl);
+export function createDBConn(config: Config) {
+  const db = drizzle(config.databaseURL);
 
-export default db;
+  return db;
+}
+
+export type DB = ReturnType<typeof createDBConn>;

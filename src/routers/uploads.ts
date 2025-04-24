@@ -1,17 +1,15 @@
 import { FileStore } from "@tus/file-store";
 import { Server } from "@tus/server";
 import { Router } from "express";
-import { type Config } from "./config.ts";
+import { type Config } from "../config.ts";
 
-export function createUploadsRouter(
-  config: Pick<Config, "fileStoreDirectoryPath">
-) {
+export function createUploadsRouter(config: Config) {
   const router = Router();
 
   const server = new Server({
     path: "/uploads",
     datastore: new FileStore({
-      directory: config.fileStoreDirectoryPath,
+      directory: config.fileStoreDirPath,
     }),
   });
 

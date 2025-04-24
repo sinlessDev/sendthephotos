@@ -1,24 +1,17 @@
-import * as v from "valibot";
-
-const literallyBoolean = v.custom((value) => {
-  if (value !== "true" && value !== "false") {
-    throw new Error("Value must be true or false");
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      ENABLE_HTTP_REQUEST_LOGGING: string;
+      DATABASE_URL: string;
+      FILE_STORE_DIR_PATH: string;
+    }
   }
-  return value === "true";
-});
-
-const envSchema = v.object({
-  ENABLE_HTTP_REQUEST_LOGGING: literallyBoolean,
-  DATABASE_URL: v.string(),
-  FILE_STORE_DIR_PATH: v.string(),
-});
-
-const env = v.parse(envSchema, process.env);
+}
 
 const config = Object.freeze({
-  enableHttpRequestLogging: env.ENABLE_HTTP_REQUEST_LOGGING,
-  databaseUrl: env.DATABASE_URL,
-  fileStoreDirectoryPath: env.FILE_STORE_DIR_PATH,
+  enableHttpRequestLogging: process.env.ENABLE_HTTP_REQUEST_LOGGING === "true",
+  databaseURL: process.env.DATABASE_URL,
+  fileStoreDirPath: process.env.FILE_STORE_DIR_PATH,
 });
 
 export type Config = typeof config;

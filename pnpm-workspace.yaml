@@ -1,8 +1,6 @@
 onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - '@swc/core'
+  - "@swc/core"
   - better-sqlite3
   - esbuild
 
 packages:
-  - srvx

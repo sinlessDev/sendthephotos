@@ -9,8 +9,7 @@
     "better-sqlite3": "^11.9.1",
     "drizzle-orm": "^0.42.0",
     "express": "^5.1.0",
-    "morgan": "^1.10.0",
-    "valibot": "^1.0.0"
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.41.0",
@@ -27,7 +26,7 @@
   "packageManager": "pnpm@10.8.1",
   "pnpm": {
     "overrides": {
-      "srvx": "file:./srvx-0.5.2.tgz"
+      "srvx": "file:./vendor/srvx-0.5.2.tgz"
     }
   }
 }
