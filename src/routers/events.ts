@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { DB } from "../db.ts";
 import { findEventByID, insertEvent, findAllEvents } from "../repos/events.ts";
+import { toDataURL } from "qrcode";
 
 export type EventsDeps = {
   db: DB;
@@ -28,7 +29,9 @@ export function createEventsRouter(deps: EventsDeps) {
 
     const event = await findEventByID(deps.db, eventID);
 
-    res.json({ event });
+    const qrCodeURL = await toDataURL(`http://localhost:5173/${eventID}`);
+
+    res.json({ event: { ...event, qrCodeURL } });
   });
 
   return router;

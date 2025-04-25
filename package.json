@@ -10,7 +10,8 @@
     "drizzle-orm": "^0.42.0",
     "express": "^5.1.0",
     "morgan": "^1.10.0",
-    "pg": "^8.15.6"
+    "pg": "^8.15.6",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.41.0",
@@ -22,6 +23,7 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.15.2",
     "@types/pg": "^8.11.14",
+    "@types/qrcode": "^1.5.5",
     "drizzle-kit": "^0.31.0",
     "typescript": "^5.8.3"
   },

@@ -4,7 +4,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, Route, Switch, useLocation, useParams } from "wouter";
 import { createEvent, getAllEvents, getEvent } from "./api.ts";
 import * as v from "valibot";
-
+import {
+  QrCodeDialog,
+  QrCodeDialogTrigger,
+  QrCodeDialogContent,
+} from "./qr-code-dialog.tsx";
+import { toDataURL } from "qrcode";
 export function EventsRoute() {
   return (
     <div className="max-w-5xl mx-auto">
@@ -161,21 +166,43 @@ function EventDetails() {
       </Link>
       <div className="mt-2 flex items-center justify-between">
         <h1 className="text-3xl font-bold">{eventQuery.data.event.name}</h1>
-        <Link
-          href={`~/${eventID}`}
-          className="bg-green-700 size-10 hover:bg-green-800 rounded-full flex items-center justify-center"
-        >
-          <span
-            className="material-symbols-sharp text-white"
-            style={{
-              fontSize: "24px",
-              fontVariationSettings:
-                "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
-            }}
+        <div className="flex items-center gap-2">
+          <QrCodeDialog>
+            <QrCodeDialogTrigger asChild>
+              <button className="bg-white hover:bg-stone-200 border border-black/25 p-2 flex items-center justify-center rounded-full">
+                <span
+                  className="material-symbols-sharp"
+                  style={{
+                    fontSize: "24px",
+                    fontVariationSettings:
+                      "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
+                  }}
+                >
+                  qr_code
+                </span>
+              </button>
+            </QrCodeDialogTrigger>
+            <QrCodeDialogContent
+              url={eventQuery.data.event.qrCodeURL}
+              onDownload={() => {}}
+            />
+          </QrCodeDialog>
+          <Link
+            href={`~/${eventID}`}
+            className="bg-green-700 size-10 hover:bg-green-800 rounded-full flex items-center justify-center"
           >
-            open_in_new
-          </span>
-        </Link>
+            <span
+              className="material-symbols-sharp text-white"
+              style={{
+                fontSize: "24px",
+                fontVariationSettings:
+                  "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
+              }}
+            >
+              open_in_new
+            </span>
+          </Link>
+        </div>
       </div>
       {noUploads ? (
         <div className="mt-10 outline-2 outline-dashed outline-black/20 rounded-xl flex flex-col items-center justify-center p-9 max-w-lg mx-auto bg-white">
