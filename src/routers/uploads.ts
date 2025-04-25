@@ -3,7 +3,7 @@ import { Server } from "@tus/server";
 import { Router } from "express";
 import { randomUUID } from "node:crypto";
 import { insertUpload } from "../repos/uploads.ts";
-import type { Conf } from "../config.ts";
+import type { Conf } from "../conf.ts";
 import type { DB } from "../db.ts";
 
 const EVENT_ID_HEADER_NAME = "X-Event-ID";

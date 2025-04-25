@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { pgTable, text, uuid } from "drizzle-orm/pg-core";
-import type { Conf } from "./config.ts";
+import type { Conf } from "./conf.ts";
 
 export const events = pgTable("events", {
   id: uuid().primaryKey(),

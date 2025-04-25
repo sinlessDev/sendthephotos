@@ -1,5 +1,5 @@
 import { createApp } from "./app.ts";
-import { createEnvConf } from "./config.ts";
+import { createEnvConf } from "./conf.ts";
 import { createDB } from "./db.ts";
 
 const conf = createEnvConf();

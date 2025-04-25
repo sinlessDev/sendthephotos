@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import { createEnvConf } from "./src/config.ts";
+import { createEnvConf } from "./src/conf.ts";
 
 const conf = createEnvConf();
 
