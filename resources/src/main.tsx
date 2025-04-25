@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./main.css";
 import { Route } from "wouter";
+import "./main.css";
 
 const rootEl = document.getElementById("root");
 
