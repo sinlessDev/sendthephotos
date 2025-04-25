@@ -5,6 +5,9 @@ import { events } from "../db.ts";
 export async function findEventByID(db: DB, eventID: string) {
   const event = await db.query.events.findFirst({
     where: eq(events.id, eventID),
+    columns: {
+      name: true,
+    },
     with: {
       uploads: {
         columns: {
@@ -25,19 +28,18 @@ export async function findEventByID(db: DB, eventID: string) {
 
 type NewEvent = typeof events.$inferInsert;
 
-export async function upsertEvent(db: DB, event: NewEvent) {
-  const [insertedEvent] = await db
-    .insert(events)
-    .values(event)
-    .onConflictDoUpdate({
-      target: events.id,
-      set: {
-        name: event.name,
-      },
-    })
-    .returning({
-      id: events.id,
-    });
+export async function insertEvent(db: DB, event: NewEvent) {
+  const [insertedEvent] = await db.insert(events).values(event).returning({
+    id: events.id,
+  });
 
   return insertedEvent.id;
+}
+
+export async function findAllEvents(db: DB) {
+  return await db.query.events.findMany({
+    columns: {
+      name: true,
+    },
+  });
 }
