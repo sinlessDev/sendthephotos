@@ -192,9 +192,10 @@ function EventDetails() {
               }}
             />
           </QrCodeDialog>
-          <Link
-            href={`~/${eventID}`}
+          <a
+            href={`/${eventID}`}
             className="bg-green-700 size-10 hover:bg-green-800 rounded-full flex items-center justify-center"
+            target="_blank"
           >
             <span
               className="material-symbols-sharp text-white"
@@ -206,7 +207,7 @@ function EventDetails() {
             >
               open_in_new
             </span>
-          </Link>
+          </a>
         </div>
       </div>
       {noUploads ? (
