@@ -29,7 +29,11 @@ export function createEventsRouter(deps: EventsDeps) {
 
     const event = await findEventByID(deps.db, eventID);
 
-    const qrCodeURL = await toDataURL(`http://localhost:5173/${eventID}`);
+    const qrCodeURL = await toDataURL(`http://localhost:5173/${eventID}`, {
+      width: 1024,
+      margin: 0,
+      errorCorrectionLevel: "high",
+    });
 
     res.json({ event: { ...event, qrCodeURL } });
   });

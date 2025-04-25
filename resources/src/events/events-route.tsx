@@ -184,7 +184,12 @@ function EventDetails() {
             </QrCodeDialogTrigger>
             <QrCodeDialogContent
               url={eventQuery.data.event.qrCodeURL}
-              onDownload={() => {}}
+              onDownload={() => {
+                const link = document.createElement("a");
+                link.href = eventQuery.data.event.qrCodeURL;
+                link.download = `${eventQuery.data.event.name}.png`;
+                link.click();
+              }}
             />
           </QrCodeDialog>
           <Link
