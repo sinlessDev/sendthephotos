@@ -10,10 +10,11 @@ export type Conf = Readonly<{
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      ENABLE_HTTP_REQUEST_LOGGING: string;
+      NODE_ENV: "production"; // Only run in production
+      ENABLE_HTTP_REQUEST_LOGGING: "true" | "false";
       DATABASE_URL: string;
       FILE_STORE_DIR_PATH: string;
-      SERVE_RESOURCES: string;
+      SERVE_RESOURCES: "true" | "false";
       HOST: string;
       PORT: string;
     }
