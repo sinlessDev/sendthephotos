@@ -1,27 +1,28 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "dotenvx run -- node --import @swc-node/register/esm-register --watch ./src/main.ts"
+    "dev": "dotenvx run -- node --import @swc-node/register/esm-register --watch ./src/main.ts",
+    "dev:pg": "docker run --rm --name stp-pg -e POSTGRES_USER=stp -e POSTGRES_PASSWORD=stp -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 postgres:17.4-alpine"
   },
   "dependencies": {
     "@tus/file-store": "^2.0.0",
     "@tus/server": "^2.1.0",
-    "better-sqlite3": "^11.9.1",
     "compression": "^1.8.0",
     "drizzle-orm": "^0.42.0",
     "express": "^5.1.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "pg": "^8.15.5"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^1.41.0",
     "@swc-node/register": "^1.10.10",
     "@tsconfig/node-ts": "^23.6.1",
     "@tsconfig/node22": "^22.0.1",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/compression": "^1.7.5",
     "@types/express": "^5.0.1",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.14.1",
+    "@types/pg": "^8.11.14",
     "drizzle-kit": "^0.31.0",
     "typescript": "^5.8.3"
   },

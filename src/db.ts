@@ -1,18 +1,18 @@
 import { relations } from "drizzle-orm";
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { drizzle } from "drizzle-orm/better-sqlite3";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { pgTable, text, uuid } from "drizzle-orm/pg-core";
 import type { Conf } from "./config.ts";
 
-export const events = sqliteTable("events", {
-  id: text().primaryKey(),
+export const events = pgTable("events", {
+  id: uuid().primaryKey(),
   name: text().notNull(),
 });
 
-export const uploads = sqliteTable("uploads", {
-  id: text().primaryKey(),
+export const uploads = pgTable("uploads", {
+  id: uuid().primaryKey(),
   name: text().notNull(),
   url: text().notNull(),
-  eventId: text("event_id").notNull(),
+  eventId: uuid("event_id").notNull(),
 });
 
 export const uploadsRelations = relations(uploads, ({ one }) => ({

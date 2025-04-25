@@ -2,6 +2,12 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Run pg",
+      "type": "shell",
+      "command": "pnpm dev:pg",
+      "problemMatcher": []
+    },
+    {
       "label": "Run server",
       "type": "shell",
       "command": "pnpm dev",
@@ -15,7 +21,7 @@
     },
     {
       "label": "Run dev",
-      "dependsOn": ["Run server", "Serve resources"],
+      "dependsOn": ["Run pg", "Run server", "Serve resources"],
       "dependsOrder": "parallel",
       "problemMatcher": []
     },

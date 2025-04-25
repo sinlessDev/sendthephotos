@@ -6,7 +6,7 @@ const conf = createEnvConf();
 export default defineConfig({
   out: "./drizzle",
   schema: "./src/db.ts",
-  dialect: "sqlite",
+  dialect: "postgresql",
   dbCredentials: {
     url: conf.databaseURL,
   },
