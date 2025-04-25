@@ -22,6 +22,7 @@ function createTusServerHandler(deps: TusServerHandlerDeps) {
     datastore: new FileStore({
       directory: deps.conf.fileStoreDirPath,
     }),
+    allowedHeaders: [EVENT_ID_HEADER_NAME],
     namingFunction(req) {
       const id = randomUUID();
       const eventID = req.headers.get(EVENT_ID_HEADER_NAME);
@@ -56,10 +57,16 @@ function createTusServerHandler(deps: TusServerHandlerDeps) {
         throw new Error("File upload failed: File name is missing");
       }
 
+      const id = upload.id.split("/").at(-1);
+
+      if (!id) {
+        throw new Error("File upload failed: ID is missing");
+      }
+
       await insertUpload(deps.db, {
-        id: upload.id,
+        id,
         name: fileName,
-        url: `/api/uploads/${upload.id}`,
+        url: `/api/uploads/${id}`,
         eventId: eventID,
       });
 

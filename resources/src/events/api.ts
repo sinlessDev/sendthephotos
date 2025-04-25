@@ -25,3 +25,37 @@ export async function createEvent(
 
   return response.json();
 }
+
+type GetEventsResponse = {
+  events: {
+    id: string;
+    name: string;
+  }[];
+};
+
+export async function getAllEvents(): Promise<GetEventsResponse> {
+  const response = await fetch("/api/events");
+
+  if (!response.ok) {
+    throw new Error("Failed to get events");
+  }
+
+  return response.json();
+}
+
+type GetEventResponse = {
+  event: {
+    name: string;
+    uploads: {
+      id: string;
+      name: string;
+      url: string;
+    }[];
+  };
+};
+
+export async function getEvent(eventID: string): Promise<GetEventResponse> {
+  const response = await fetch(`/api/events/${eventID}`);
+
+  return response.json();
+}

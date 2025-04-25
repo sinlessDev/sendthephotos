@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { useMutation } from "@tanstack/react-query";
-import { Link, Route, Switch, useLocation } from "wouter";
-import { createEvent } from "./api.ts";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Link, Route, Switch, useLocation, useParams } from "wouter";
+import { createEvent, getAllEvents, getEvent } from "./api.ts";
 import * as v from "valibot";
 
 export function EventsRoute() {
@@ -14,6 +14,9 @@ export function EventsRoute() {
         </Route>
         <Route path="/">
           <EventsList />
+        </Route>
+        <Route path="/:eventID">
+          <EventDetails />
         </Route>
       </Switch>
     </div>
@@ -33,7 +36,7 @@ function NewEventForm() {
     mutationFn: createEvent,
   });
 
-  const [location, navigate] = useLocation();
+  const [, navigate] = useLocation();
 
   const onSubmit = (data: v.InferInput<typeof createEventSchema>) => {
     createEventMutation.mutate(data, {
@@ -70,6 +73,13 @@ function NewEventForm() {
 }
 
 function EventsList() {
+  const eventsQuery = useQuery({
+    queryKey: ["events"],
+    queryFn: getAllEvents,
+  });
+
+  const noEvents = !eventsQuery.data || eventsQuery.data.events.length === 0;
+
   return (
     <div className="p-7">
       <div className="flex items-center justify-between">
@@ -85,16 +95,96 @@ function EventsList() {
           add_circle
         </Link>
       </div>
+      {noEvents ? (
+        <div className="mt-10 outline-2 outline-dashed outline-black/20 rounded-xl flex flex-col items-center justify-center p-9 max-w-lg mx-auto bg-white">
+          <h2 className="text-2xl font-bold">No events yet</h2>
+          <p className="text-lg font-medium">
+            <Link
+              href="/new"
+              className="text-blue-600 underline decoration-2 hover:text-blue-800"
+            >
+              Create an event
+            </Link>{" "}
+            to get started.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-10">
+          <ul className="grid grid-cols-4">
+            {eventsQuery.data.events.map((event) => (
+              <li
+                key={event.id}
+                className="bg-white p-4 rounded-lg border-2 border-black/15"
+              >
+                <Link
+                  href={`/${event.id}`}
+                  className="text-blue-600 underline decoration-2 hover:text-blue-800 text-lg font-medium leading-none"
+                >
+                  {event.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function EventDetails() {
+  const { eventID } = useParams<{ eventID: string }>();
+
+  const eventQuery = useQuery({
+    queryKey: ["event", eventID],
+    queryFn: () => getEvent(eventID),
+  });
+
+  const noEvent = !eventQuery.data;
+
+  if (noEvent) {
+    return (
+      <div className="p-7">
+        <h1 className="text-3xl font-bold">No event found</h1>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-7">
+      <Link
+        href="/"
+        className="text-blue-600 underline decoration-2 hover:text-blue-800 text-lg font-medium"
+      >
+        Back
+      </Link>
+      <div className="mt-2 flex items-center justify-between">
+        <h1 className="text-3xl font-bold">{eventQuery.data.event.name}</h1>
+        <Link
+          href={`~/${eventID}`}
+          className="bg-green-700 size-10 hover:bg-green-800 rounded-full flex items-center justify-center"
+        >
+          <span
+            className="material-symbols-sharp text-white"
+            style={{
+              fontSize: "24px",
+              fontVariationSettings:
+                "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
+            }}
+          >
+            open_in_new
+          </span>
+        </Link>
+      </div>
       <div className="mt-10 outline-2 outline-dashed outline-black/20 rounded-xl flex flex-col items-center justify-center p-9 max-w-lg mx-auto bg-white">
-        <h2 className="text-2xl font-bold">No events yet</h2>
+        <h2 className="text-2xl font-bold">No uploads yet</h2>
         <p className="text-lg font-medium">
           <Link
-            href="/new"
+            href={`~/${eventID}`}
             className="text-blue-600 underline decoration-2 hover:text-blue-800"
           >
-            Create an event
+            Check out guest page
           </Link>{" "}
-          to get started.
+          to upload photos.
         </p>
       </div>
     </div>

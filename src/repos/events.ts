@@ -37,9 +37,5 @@ export async function insertEvent(db: DB, event: NewEvent) {
 }
 
 export async function findAllEvents(db: DB) {
-  return await db.query.events.findMany({
-    columns: {
-      name: true,
-    },
-  });
+  return await db.query.events.findMany();
 }
