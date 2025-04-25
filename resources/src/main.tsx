@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./main.css";
+import { Route } from "wouter";
 
 const rootEl = document.getElementById("root");
 
@@ -10,6 +11,8 @@ if (!rootEl) {
 
 createRoot(rootEl).render(
   <StrictMode>
-    <h1 className="font-serif text-3xl font-bold">Hello World</h1>
+    <Route path="/hello-world">
+      <h1 className="font-serif text-3xl font-bold">Hello World</h1>
+    </Route>
   </StrictMode>
 );
