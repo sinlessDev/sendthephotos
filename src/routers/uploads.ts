@@ -23,26 +23,8 @@ function createTusServerHandler(deps: TusServerHandlerDeps) {
       directory: deps.conf.fileStoreDirPath,
     }),
     allowedHeaders: [EVENT_ID_HEADER_NAME],
-    namingFunction(req) {
-      const id = randomUUID();
-      const eventID = req.headers.get(EVENT_ID_HEADER_NAME);
-
-      if (!eventID) {
-        throw new Error("File upload failed: Event ID is missing");
-      }
-
-      return `events/${eventID}/${id}`;
-    },
-    generateUrl(req, { proto, host, path, id }) {
-      id = Buffer.from(id, "utf-8").toString("base64url");
-      return `${proto}://${host}${path}/${id}`;
-    },
-    getFileIdFromRequest(req, lastPath) {
-      if (!lastPath) {
-        throw new Error("File upload failed: Last path is missing");
-      }
-
-      return Buffer.from(lastPath, "base64url").toString("utf-8");
+    namingFunction() {
+      return randomUUID();
     },
     async onUploadFinish(req, upload) {
       const eventID = req.headers.get(EVENT_ID_HEADER_NAME);
@@ -57,16 +39,10 @@ function createTusServerHandler(deps: TusServerHandlerDeps) {
         throw new Error("File upload failed: File name is missing");
       }
 
-      const id = upload.id.split("/").at(-1);
-
-      if (!id) {
-        throw new Error("File upload failed: ID is missing");
-      }
-
       await insertUpload(deps.db, {
-        id,
+        id: upload.id,
         name: fileName,
-        url: `/api/uploads/${id}`,
+        url: `/api/uploads/${upload.id}`,
         eventId: eventID,
       });
 

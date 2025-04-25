@@ -33,6 +33,15 @@
       "presentation": {
         "focus": true
       }
+    },
+    {
+      "label": "Run drizzle studio",
+      "type": "shell",
+      "command": "pnpm drizzle-kit studio",
+      "problemMatcher": [],
+      "presentation": {
+        "focus": true
+      }
     }
   ]
 }

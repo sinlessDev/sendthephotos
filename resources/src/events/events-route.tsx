@@ -149,6 +149,8 @@ function EventDetails() {
     );
   }
 
+  const noUploads = eventQuery.data.event.uploads.length === 0;
+
   return (
     <div className="p-7">
       <Link
@@ -175,18 +177,26 @@ function EventDetails() {
           </span>
         </Link>
       </div>
-      <div className="mt-10 outline-2 outline-dashed outline-black/20 rounded-xl flex flex-col items-center justify-center p-9 max-w-lg mx-auto bg-white">
-        <h2 className="text-2xl font-bold">No uploads yet</h2>
-        <p className="text-lg font-medium">
-          <Link
-            href={`~/${eventID}`}
-            className="text-blue-600 underline decoration-2 hover:text-blue-800"
-          >
-            Check out guest page
-          </Link>{" "}
-          to upload photos.
-        </p>
-      </div>
+      {noUploads ? (
+        <div className="mt-10 outline-2 outline-dashed outline-black/20 rounded-xl flex flex-col items-center justify-center p-9 max-w-lg mx-auto bg-white">
+          <h2 className="text-2xl font-bold">No uploads yet</h2>
+          <p className="text-lg font-medium">
+            <Link
+              href={`~/${eventID}`}
+              className="text-blue-600 underline decoration-2 hover:text-blue-800"
+            >
+              Check out guest page
+            </Link>{" "}
+            to upload photos.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-10 grid grid-cols-4 gap-4">
+          {eventQuery.data.event.uploads.map((upload) => (
+            <img key={upload.id} src={upload.url} alt={upload.name} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
