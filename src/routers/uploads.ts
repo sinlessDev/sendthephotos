@@ -13,9 +13,9 @@ export type UploadsDeps = {
   db: DB;
 };
 
-export function createUploadsRouter(deps: UploadsDeps) {
-  const router = Router();
+type TusServerHandlerDeps = UploadsDeps;
 
+function createTusServerHandler(deps: TusServerHandlerDeps) {
   const server = new Server({
     path: "/api/uploads",
     relativeLocation: true,
@@ -67,7 +67,13 @@ export function createUploadsRouter(deps: UploadsDeps) {
     },
   });
 
-  router.all("/{*splat}", server.handle.bind(server));
+  return server.handle.bind(server);
+}
+
+export function createUploadsRouter(deps: UploadsDeps) {
+  const router = Router();
+
+  router.all("/{*splat}", createTusServerHandler(deps));
 
   return router;
 }
