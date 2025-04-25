@@ -1,6 +1,6 @@
 import { Router } from "express";
 import type { DB } from "../db.ts";
-import { findEventByID, insertEvent } from "../repos/events.ts";
+import { findEventByID, upsertEvent } from "../repos/events.ts";
 
 export type EventsDeps = {
   db: DB;
@@ -13,7 +13,7 @@ export function createEventsRouter(deps: EventsDeps) {
     const { eventID } = req.params;
     const { name } = req.body;
 
-    const event = await insertEvent(deps.db, { id: eventID, name });
+    const event = await upsertEvent(deps.db, { id: eventID, name });
 
     res.json(event);
   });

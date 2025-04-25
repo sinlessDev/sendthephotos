@@ -23,12 +23,21 @@ export async function findEventByID(db: DB, eventID: string) {
   return event;
 }
 
-type InsertingEvent = typeof events.$inferInsert;
+type NewEvent = typeof events.$inferInsert;
 
-export async function insertEvent(db: DB, event: InsertingEvent) {
-  const [insertedEvent] = await db.insert(events).values(event).returning({
-    id: events.id,
-  });
+export async function upsertEvent(db: DB, event: NewEvent) {
+  const [insertedEvent] = await db
+    .insert(events)
+    .values(event)
+    .onConflictDoUpdate({
+      target: events.id,
+      set: {
+        name: event.name,
+      },
+    })
+    .returning({
+      id: events.id,
+    });
 
   return insertedEvent.id;
 }
