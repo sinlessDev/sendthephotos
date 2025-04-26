@@ -71,6 +71,7 @@ export function GuestRoute() {
 
   return (
     <div className="p-7 max-w-5xl mx-auto">
+      <title>{`${eventQuery.data.event.name} - SendThePhotos`}</title>
       <div className="flex items-center gap-2 justify-between">
         <h1 className="text-3xl font-bold">{eventQuery.data.event.name}</h1>
         <input
