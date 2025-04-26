@@ -1,8 +1,9 @@
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLayoutEffect } from "react";
 import * as tus from "tus-js-client";
-import { Link, useParams } from "wouter";
-import { deleteUpload, getEventForGuest } from "./api.ts";
+import { Link, useParams, useRoute } from "wouter";
+import { deleteUpload, getEventForGuest, getUpload } from "./api.ts";
 
 const fingerprint = await FingerprintJS.load()
   .then((fp) => fp.get())
@@ -62,7 +63,7 @@ export function GuestRoute() {
           .sort(
             (a, b) =>
               new Date(b.creationTime).getTime() -
-              new Date(a.creationTime).getTime(),
+              new Date(a.creationTime).getTime()
           )
           .at(0);
 
@@ -126,19 +127,23 @@ export function GuestRoute() {
             {eventQuery.data.event.uploads.map((upload) => (
               <div key={upload.id} className="flex items-center">
                 <div className="relative">
-                  {upload.metadata.mimeType.startsWith("image/") ? (
-                    <img
-                      src={`/files/${upload.id}`}
-                      alt={upload.metadata.filename}
-                      className="rounded-lg"
-                    />
-                  ) : (
-                    <video
-                      src={`/files/${upload.id}`}
-                      className="rounded-lg"
-                      controls
-                    />
-                  )}
+                  <Link href={`~/${eventID}/gallery/${upload.id}`}>
+                    {upload.metadata.mimeType.startsWith("image/") ? (
+                      <img
+                        src={`/files/${upload.id}`}
+                        alt={upload.metadata.filename}
+                        className="rounded-lg"
+                      />
+                    ) : (
+                      <video
+                        src={`/files/${upload.id}`}
+                        className="rounded-lg"
+                        autoPlay
+                        muted
+                        loop
+                      />
+                    )}
+                  </Link>
                   {upload.deletable && (
                     <button
                       onClick={() => deleteUploadMutation.mutate(upload.id)}
@@ -169,6 +174,136 @@ export function GuestRoute() {
             </a>
           </p>
         </footer>
+      </div>
+    </div>
+  );
+}
+
+export function GalleryRoute() {
+  const { eventID, uploadID } = useParams<{
+    eventID: string;
+    uploadID: string;
+  }>();
+
+  const [match] = useRoute("/events/*");
+
+  useLayoutEffect(() => {
+    document.body.classList.add("overscroll-none", "bg-black");
+
+    return () => {
+      document.body.classList.remove("overscroll-none", "bg-black");
+    };
+  }, []);
+
+  const eventQuery = useQuery({
+    queryKey: ["event", eventID],
+    queryFn: () => getEventForGuest(eventID, fingerprint),
+  });
+
+  const uploadQuery = useQuery({
+    queryKey: ["upload", uploadID],
+    queryFn: () => getUpload(uploadID),
+  });
+
+  const noEvent = !eventQuery.data;
+
+  if (noEvent) {
+    return <div>No event found</div>;
+  }
+
+  const uploadIDIndex = eventQuery.data.event.uploads.findIndex(
+    (upload) => upload.id === uploadID
+  );
+
+  const nextUpload = eventQuery.data.event.uploads.at(
+    uploadIDIndex + 1 > eventQuery.data.event.uploads.length - 1
+      ? 0
+      : uploadIDIndex + 1
+  )?.id;
+  const previousUpload = eventQuery.data.event.uploads.at(
+    uploadIDIndex - 1 < 0
+      ? eventQuery.data.event.uploads.length - 1
+      : uploadIDIndex - 1
+  )?.id;
+
+  const noUpload = !uploadQuery.data;
+
+  if (noUpload) {
+    return <div>Upload not found</div>;
+  }
+
+  return (
+    <div className="h-screen p-8 relative">
+      <Link
+        href={match ? `~/events/${eventID}` : `~/${eventID}`}
+        className="absolute top-8 right-8 text-white size-12 flex items-center justify-center hover:bg-white/15 rounded-full"
+      >
+        <span
+          className="material-symbols-sharp"
+          style={{
+            fontSize: "24px",
+            fontVariationSettings: "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
+          }}
+        >
+          close
+        </span>
+      </Link>
+      <div className="max-w-lg h-full mx-auto w-full relative">
+        {uploadQuery.data.upload.metadata.mimeType.startsWith("image/") ? (
+          <img
+            src={`/files/${uploadID}`}
+            alt={uploadID}
+            className="h-full w-full object-contain"
+          />
+        ) : (
+          <video
+            src={`/files/${uploadID}`}
+            className="h-full w-full object-contain"
+            controls
+          />
+        )}
+        {previousUpload && eventQuery.data.event.uploads.length > 1 && (
+          <Link
+            href={
+              match
+                ? `~/events/${eventID}/gallery/${previousUpload}`
+                : `~/${eventID}/gallery/${previousUpload}`
+            }
+            className="absolute top-1/2 -left-16 -translate-y-1/2 text-white size-12 flex items-center justify-center hover:bg-white/15 rounded-full"
+          >
+            <span
+              className="material-symbols-sharp"
+              style={{
+                fontSize: "48px",
+                fontVariationSettings:
+                  "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 48",
+              }}
+            >
+              chevron_left
+            </span>
+          </Link>
+        )}
+        {nextUpload && eventQuery.data.event.uploads.length > 1 && (
+          <Link
+            href={
+              match
+                ? `~/events/${eventID}/gallery/${nextUpload}`
+                : `~/${eventID}/gallery/${nextUpload}`
+            }
+            className="absolute top-1/2 -right-16 -translate-y-1/2 text-white size-12 flex items-center justify-center hover:bg-white/15 rounded-full"
+          >
+            <span
+              className="material-symbols-sharp"
+              style={{
+                fontSize: "48px",
+                fontVariationSettings:
+                  "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 48",
+              }}
+            >
+              chevron_right
+            </span>
+          </Link>
+        )}
       </div>
     </div>
   );

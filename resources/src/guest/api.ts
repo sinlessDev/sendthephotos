@@ -26,13 +26,25 @@ type EventForGuest = {
 
 export async function getEventForGuest(
   eventID: string,
-  fingerprint: string,
+  fingerprint: string
 ): Promise<EventForGuest> {
   const res = await fetch(`/api/events/${eventID}/${fingerprint}`);
 
   if (!res.ok) {
     throw new Error("Failed to get event");
   }
+
+  return res.json();
+}
+
+type Upload = {
+  upload: {
+    metadata: { filename: string; mimeType: string };
+  };
+};
+
+export async function getUpload(uploadID: string): Promise<Upload> {
+  const res = await fetch(`/api/uploads/${uploadID}`);
 
   return res.json();
 }

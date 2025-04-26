@@ -15,3 +15,18 @@ export async function insertUpload(db: DB, upload: InsertingUpload) {
 export async function deleteUpload(db: DB, id: string) {
   await db.delete(uploads).where(eq(uploads.id, id));
 }
+
+export async function getUploadMetadata(db: DB, id: string) {
+  const upload = await db.query.uploads.findFirst({
+    where: eq(uploads.id, id),
+    columns: {
+      metadata: true,
+    },
+  });
+
+  if (!upload) {
+    return null;
+  }
+
+  return upload.metadata;
+}
