@@ -118,7 +118,7 @@ function EventsList() {
         </div>
       ) : (
         <div className="mt-10">
-          <ul className="grid grid-cols-4">
+          <ul className="grid grid-cols-4 gap-4">
             {eventsQuery.data.events.map((event) => (
               <li
                 key={event.id}

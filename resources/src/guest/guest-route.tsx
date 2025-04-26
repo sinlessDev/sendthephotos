@@ -72,6 +72,7 @@ export function GuestRoute() {
           accept="image/*"
           hidden
           onChange={onFilesChange}
+          multiple
         />
         <label
           htmlFor="uploads"
