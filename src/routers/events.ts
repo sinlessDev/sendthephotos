@@ -1,6 +1,11 @@
 import { Router } from "express";
 import type { DB } from "../db.ts";
-import { findEventByID, insertEvent, findAllEvents } from "../repos/events.ts";
+import {
+  mustFindEventByID,
+  insertEvent,
+  findAllEvents,
+  findEventByID,
+} from "../repos/events.ts";
 import { toFileStream } from "qrcode";
 import ZipStream from "zip-stream";
 
@@ -14,7 +19,7 @@ export function createEventsRouter(deps: EventsDeps) {
   router.post("/", async (req, res) => {
     const { name } = req.body;
 
-    const eventID = await insertEvent(deps.db, { name });
+    const eventID = await insertEvent(deps.db, { name, paid: false });
 
     res.json({ event: { id: eventID } });
   });
@@ -30,13 +35,18 @@ export function createEventsRouter(deps: EventsDeps) {
 
     const event = await findEventByID(deps.db, eventID);
 
+    if (!event) {
+      res.status(404).json({ error: "Event not found" });
+      return;
+    }
+
     res.json({ event });
   });
 
   router.get("/:eventID/qr", async (req, res) => {
     const { eventID } = req.params;
 
-    const event = await findEventByID(deps.db, eventID);
+    const event = await mustFindEventByID(deps.db, eventID);
 
     res.setHeader("Content-Type", "image/png");
     res.setHeader(
@@ -54,7 +64,7 @@ export function createEventsRouter(deps: EventsDeps) {
   router.get("/:eventID/zip", async (req, res) => {
     const { eventID } = req.params;
 
-    const event = await findEventByID(deps.db, eventID);
+    const event = await mustFindEventByID(deps.db, eventID);
 
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(

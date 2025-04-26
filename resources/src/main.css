@@ -6,3 +6,30 @@
     font-family: "Commissioner", var(--font-sans);
   }
 }
+
+@utility bg-striped {
+  --stripe-angle: 45deg;
+  --stripe-width: --spacing(2.5);
+}
+
+@utility bg-striped-angle-* {
+  --stripe-angle: --value([angle], --angle- *);
+}
+
+@utility bg-striped-width-* {
+  --stripe-width: --value([length], --width- *);
+}
+
+@utility bg-striped-from-* {
+  --stripe-from-color: --value(--color- *, [color]);
+}
+
+@utility bg-striped-to-* {
+  background-image: repeating-linear-gradient(
+    var(--stripe-angle),
+    var(--stripe-from-color),
+    var(--stripe-from-color) var(--stripe-width),
+    --value(--color- *, [color]) var(--stripe-width),
+    --value(--color- *, [color]) calc(var(--stripe-width) * 2)
+  );
+}

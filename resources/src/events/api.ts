@@ -46,6 +46,7 @@ export async function getAllEvents(): Promise<GetEventsResponse> {
 type GetEventResponse = {
   event: {
     name: string;
+    paid: boolean;
     qrCodeURL: string;
     uploads: {
       id: string;

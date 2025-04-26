@@ -2,11 +2,12 @@ import { eq } from "drizzle-orm";
 import type { DB } from "../db.ts";
 import { events } from "../db.ts";
 
-export async function findEventByID(db: DB, eventID: string) {
+export async function mustFindEventByID(db: DB, eventID: string) {
   const event = await db.query.events.findFirst({
     where: eq(events.id, eventID),
     columns: {
       name: true,
+      paid: true,
     },
     with: {
       uploads: {
@@ -23,6 +24,14 @@ export async function findEventByID(db: DB, eventID: string) {
   }
 
   return event;
+}
+
+export async function findEventByID(db: DB, eventID: string) {
+  try {
+    return await mustFindEventByID(db, eventID);
+  } catch (error) {
+    return null;
+  }
 }
 
 type NewEvent = typeof events.$inferInsert;
