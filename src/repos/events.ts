@@ -14,6 +14,7 @@ export async function mustFindEventByID(db: DB, eventID: string) {
         columns: {
           id: true,
           metadata: true,
+          visible: true,
         },
       },
     },
@@ -61,7 +62,7 @@ export async function findAllEvents(db: DB) {
 export async function getEventForGuest(
   db: DB,
   eventID: string,
-  fingerprint: string,
+  fingerprint: string
 ) {
   const event = await db.query.events.findFirst({
     where: eq(events.id, eventID),
@@ -71,6 +72,7 @@ export async function getEventForGuest(
     },
     with: {
       uploads: {
+        where: eq(uploads.visible, true),
         columns: {
           id: true,
           metadata: true,

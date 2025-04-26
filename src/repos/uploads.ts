@@ -2,12 +2,15 @@ import { and, eq } from "drizzle-orm";
 import type { DB } from "../db.ts";
 import { uploads } from "../db.ts";
 
-type InsertingUpload = typeof uploads.$inferInsert;
+type InsertingUpload = Omit<typeof uploads.$inferInsert, "visible">;
 
 export async function insertUpload(db: DB, upload: InsertingUpload) {
-  const [insertedUpload] = await db.insert(uploads).values(upload).returning({
-    id: uploads.id,
-  });
+  const [insertedUpload] = await db
+    .insert(uploads)
+    .values({ ...upload, visible: true })
+    .returning({
+      id: uploads.id,
+    });
 
   return insertedUpload.id;
 }
@@ -29,4 +32,32 @@ export async function getUploadMetadata(db: DB, id: string) {
   }
 
   return upload.metadata;
+}
+
+export async function updateUploadVisibility(
+  db: DB,
+  id: string,
+  visible: boolean
+) {
+  await db
+    .update(uploads)
+    .set({
+      visible,
+    })
+    .where(eq(uploads.id, id));
+}
+
+export async function getUploadVisibility(db: DB, id: string) {
+  const upload = await db.query.uploads.findFirst({
+    where: eq(uploads.id, id),
+    columns: {
+      visible: true,
+    },
+  });
+
+  if (!upload) {
+    throw new Error(`Upload ${id} not found`);
+  }
+
+  return upload.visible;
 }

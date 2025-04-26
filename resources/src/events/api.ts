@@ -9,7 +9,7 @@ type CreateEventArgs = {
 };
 
 export async function createEvent(
-  args: CreateEventArgs,
+  args: CreateEventArgs
 ): Promise<CreateEventResponse> {
   const response = await fetch("/api/events", {
     method: "POST",
@@ -54,6 +54,7 @@ type GetEventResponse = {
         filename: string;
         mimeType: string;
       };
+      visible: boolean;
     }[];
   };
 };
@@ -62,4 +63,14 @@ export async function getEvent(eventID: string): Promise<GetEventResponse> {
   const response = await fetch(`/api/events/${eventID}`);
 
   return response.json();
+}
+
+export async function toggleUploadVisibility(uploadID: string) {
+  const response = await fetch(`/api/uploads/${uploadID}/toggle-visibility`, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to toggle upload visibility");
+  }
 }

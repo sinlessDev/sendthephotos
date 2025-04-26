@@ -15,6 +15,7 @@ export const uploads = pgTable("uploads", {
   eventId: uuid("event_id").notNull(),
   fingerprint: text().notNull(),
   batchId: text().notNull(),
+  visible: boolean("visible").notNull(),
 });
 
 export const uploadsRel = relations(uploads, ({ one }) => ({

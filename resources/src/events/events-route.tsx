@@ -1,8 +1,13 @@
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, Route, Switch, useLocation, useParams } from "wouter";
-import { createEvent, getAllEvents, getEvent } from "./api.ts";
+import {
+  createEvent,
+  getAllEvents,
+  getEvent,
+  toggleUploadVisibility,
+} from "./api.ts";
 import * as v from "valibot";
 import {
   QrCodeDialog,
@@ -147,6 +152,15 @@ function EventDetails() {
     queryFn: () => getEvent(eventID),
   });
 
+  const queryClient = useQueryClient();
+
+  const toggleUploadVisibilityMutation = useMutation({
+    mutationFn: toggleUploadVisibility,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventID] });
+    },
+  });
+
   const noEvent = !eventQuery.data;
 
   if (noEvent) {
@@ -235,13 +249,48 @@ function EventDetails() {
           </div>
         ) : (
           <>
-            <div className="mt-10 grid grid-cols-4 gap-4">
+            <div className="mt-10 grid grid-cols-3 gap-x-7 gap-y-10">
               {eventQuery.data.event.uploads.map((upload) => (
-                <img
-                  key={upload.id}
-                  src={`/files/${upload.id}`}
-                  alt={upload.metadata.filename}
-                />
+                <div key={upload.id} className="flex items-center">
+                  <div className="relative">
+                    <Link href={`~/events/${eventID}/gallery/${upload.id}`}>
+                      {upload.metadata.mimeType.startsWith("image/") ? (
+                        <img
+                          src={`/files/${upload.id}`}
+                          alt={upload.metadata.filename}
+                          className="rounded-lg data-[visible=false]:opacity-50"
+                          data-visible={upload.visible}
+                        />
+                      ) : (
+                        <video
+                          src={`/files/${upload.id}`}
+                          className="rounded-lg data-[visible=false]:opacity-50"
+                          data-visible={upload.visible}
+                          autoPlay
+                          muted
+                          loop
+                        />
+                      )}
+                    </Link>
+                    <button
+                      onClick={() =>
+                        toggleUploadVisibilityMutation.mutate(upload.id)
+                      }
+                      className="absolute -top-3 -right-3 bg-stone-500 rounded-full text-white size-11 flex items-center justify-center active:bg-stone-600"
+                    >
+                      <span
+                        className="material-symbols-sharp"
+                        style={{
+                          fontSize: "24px",
+                          fontVariationSettings:
+                            "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
+                        }}
+                      >
+                        {upload.visible ? "visibility_off" : "visibility"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
             <div className="flex justify-center mt-7">
