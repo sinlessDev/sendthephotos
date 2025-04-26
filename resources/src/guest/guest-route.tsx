@@ -98,25 +98,31 @@ export function GuestRoute() {
           </p>
         </div>
       ) : (
-        <div className="mt-10 grid grid-cols-4 gap-4">
+        <div className="mt-10 grid grid-cols-4 gap-x-7 gap-y-10">
           {eventQuery.data.event.uploads.map((upload) => (
-            <div key={upload.id} className="relative">
-              <img src={`/files/${upload.id}`} alt={upload.metadata.filename} />
-              <button
-                onClick={() => deleteUploadMutation.mutate(upload.id)}
-                className="absolute -top-3 -right-3 bg-red-600 rounded-full text-white size-11 flex items-center justify-center active:bg-red-700"
-              >
-                <span
-                  className="material-symbols-sharp"
-                  style={{
-                    fontSize: "24px",
-                    fontVariationSettings:
-                      "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
-                  }}
+            <div key={upload.id} className="flex items-center">
+              <div className="relative">
+                <img
+                  src={`/files/${upload.id}`}
+                  alt={upload.metadata.filename}
+                  className="rounded-lg"
+                />
+                <button
+                  onClick={() => deleteUploadMutation.mutate(upload.id)}
+                  className="absolute -top-3 -right-3 bg-red-600 rounded-full text-white size-11 flex items-center justify-center active:bg-red-700"
                 >
-                  delete
-                </span>
-              </button>
+                  <span
+                    className="material-symbols-sharp"
+                    style={{
+                      fontSize: "24px",
+                      fontVariationSettings:
+                        "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
+                    }}
+                  >
+                    delete
+                  </span>
+                </button>
+              </div>
             </div>
           ))}
         </div>
