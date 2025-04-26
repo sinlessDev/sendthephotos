@@ -9,7 +9,7 @@ import {
   QrCodeDialogTrigger,
   QrCodeDialogContent,
 } from "./qr-code-dialog.tsx";
-import { toDataURL } from "qrcode";
+
 export function EventsRoute() {
   return (
     <div className="max-w-5xl mx-auto">
@@ -35,6 +35,9 @@ const createEventSchema = v.object({
 function NewEventForm() {
   const createEventForm = useForm<v.InferInput<typeof createEventSchema>>({
     resolver: valibotResolver(createEventSchema),
+    defaultValues: {
+      name: "",
+    },
   });
 
   const createEventMutation = useMutation({
@@ -226,7 +229,11 @@ function EventDetails() {
       ) : (
         <div className="mt-10 grid grid-cols-4 gap-4">
           {eventQuery.data.event.uploads.map((upload) => (
-            <img key={upload.id} src={upload.url} alt={upload.name} />
+            <img
+              key={upload.id}
+              src={`/files/${upload.id}`}
+              alt={upload.metadata.filename}
+            />
           ))}
         </div>
       )}

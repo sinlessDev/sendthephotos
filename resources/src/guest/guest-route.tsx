@@ -25,30 +25,38 @@ export function GuestRoute() {
 
   const onFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
-      return;
+      throw new Error("No files coming from input");
     }
 
-    const file = e.target.files[0];
+    for (const file of e.target.files) {
+      const upload = new tus.Upload(file, {
+        endpoint: "/files",
+        metadata: {
+          filename: file.name,
+          mimeType: file.type,
+          eventID,
+        },
+        onSuccess() {
+          queryClient.invalidateQueries({ queryKey: ["event", eventID] });
+        },
+      });
 
-    const upload = new tus.Upload(file, {
-      endpoint: "/files",
-      metadata: {
-        filename: file.name,
-        mimeType: file.type,
-        eventID,
-      },
-      onSuccess() {
-        queryClient.invalidateQueries({ queryKey: ["event", eventID] });
-      },
-    });
+      upload.findPreviousUploads().then((previousUploads) => {
+        const lastUpload = previousUploads
+          .sort(
+            (a, b) =>
+              new Date(b.creationTime).getTime() -
+              new Date(a.creationTime).getTime()
+          )
+          .at(0);
 
-    upload.findPreviousUploads().then((previousUploads) => {
-      if (previousUploads.length > 0) {
-        upload.resumeFromPreviousUpload(previousUploads[0]);
-      }
+        if (lastUpload) {
+          upload.resumeFromPreviousUpload(lastUpload);
+        }
 
-      upload.start();
-    });
+        upload.start();
+      });
+    }
   };
 
   const noUploads = eventQuery.data.event.uploads.length === 0;
