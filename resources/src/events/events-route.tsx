@@ -14,6 +14,7 @@ import {
   QrCodeDialogTrigger,
   QrCodeDialogContent,
 } from "./qr-code-dialog.tsx";
+import { useState } from "react";
 
 export function EventsRoute() {
   return (
@@ -147,18 +148,30 @@ function EventsList() {
 function EventDetails() {
   const { eventID } = useParams<{ eventID: string }>();
 
+  const queryClient = useQueryClient();
+
+  const [uploads, setUploads] = useState<
+    {
+      id: string;
+      metadata: {
+        filename: string;
+        mimeType: string;
+      };
+      visible: boolean;
+    }[]
+  >([]);
+
   const eventQuery = useQuery({
     queryKey: ["event", eventID],
-    queryFn: () => getEvent(eventID),
+    async queryFn() {
+      const event = await getEvent(eventID);
+      setUploads(event.event.uploads);
+      return event;
+    },
   });
-
-  const queryClient = useQueryClient();
 
   const toggleUploadVisibilityMutation = useMutation({
     mutationFn: toggleUploadVisibility,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["event", eventID] });
-    },
   });
 
   const noEvent = !eventQuery.data;
@@ -171,7 +184,18 @@ function EventDetails() {
     );
   }
 
-  const noUploads = eventQuery.data.event.uploads.length === 0;
+  const toggleUploadVisible = (uploadID: string) => {
+    toggleUploadVisibilityMutation.mutate(uploadID);
+    setUploads((prev) =>
+      prev.map((upload) =>
+        upload.id === uploadID
+          ? { ...upload, visible: !upload.visible }
+          : upload
+      )
+    );
+  };
+
+  const noUploads = uploads.length === 0;
 
   return (
     <div>
@@ -250,7 +274,7 @@ function EventDetails() {
         ) : (
           <>
             <div className="mt-10 grid grid-cols-3 gap-x-7 gap-y-10">
-              {eventQuery.data.event.uploads.map((upload) => (
+              {uploads.map((upload) => (
                 <div key={upload.id} className="flex items-center">
                   <div className="relative">
                     <Link href={`~/events/${eventID}/gallery/${upload.id}`}>
@@ -273,9 +297,7 @@ function EventDetails() {
                       )}
                     </Link>
                     <button
-                      onClick={() =>
-                        toggleUploadVisibilityMutation.mutate(upload.id)
-                      }
+                      onClick={() => toggleUploadVisible(upload.id)}
                       className="absolute -top-3 -right-3 bg-stone-500 rounded-full text-white size-11 flex items-center justify-center active:bg-stone-600"
                     >
                       <span
