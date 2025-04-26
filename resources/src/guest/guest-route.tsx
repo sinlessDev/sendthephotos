@@ -120,6 +120,14 @@ export function GuestRoute() {
           ))}
         </div>
       )}
+      <footer className="p-5 w-full flex items-center justify-center mt-10">
+        <p className="text-lg font-semibold">
+          Made with{" "}
+          <a href="/" className="text-blue-600 underline decoration-2">
+            SendThePhotos
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }
