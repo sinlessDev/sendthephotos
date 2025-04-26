@@ -78,7 +78,7 @@ export function GuestRoute() {
           type="file"
           name="uploads"
           id="uploads"
-          accept="image/*"
+          accept="image/*,video/*"
           hidden
           onChange={onFilesChange}
           multiple
@@ -98,15 +98,23 @@ export function GuestRoute() {
           </p>
         </div>
       ) : (
-        <div className="mt-10 grid grid-cols-4 gap-x-7 gap-y-10">
+        <div className="mt-10 grid grid-cols-3 gap-x-7 gap-y-10">
           {eventQuery.data.event.uploads.map((upload) => (
             <div key={upload.id} className="flex items-center">
               <div className="relative">
-                <img
-                  src={`/files/${upload.id}`}
-                  alt={upload.metadata.filename}
-                  className="rounded-lg"
-                />
+                {upload.metadata.mimeType.startsWith("image/") ? (
+                  <img
+                    src={`/files/${upload.id}`}
+                    alt={upload.metadata.filename}
+                    className="rounded-lg"
+                  />
+                ) : (
+                  <video
+                    src={`/files/${upload.id}`}
+                    className="rounded-lg"
+                    controls
+                  />
+                )}
                 <button
                   onClick={() => deleteUploadMutation.mutate(upload.id)}
                   className="absolute -top-3 -right-3 bg-red-600 rounded-full text-white size-11 flex items-center justify-center active:bg-red-700"
