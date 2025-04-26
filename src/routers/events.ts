@@ -5,6 +5,7 @@ import {
   insertEvent,
   findAllEvents,
   findEventByID,
+  getEventForGuest,
 } from "../repos/events.ts";
 import { toFileStream } from "qrcode";
 import ZipStream from "zip-stream";
@@ -34,6 +35,19 @@ export function createEventsRouter(deps: EventsDeps) {
     const { eventID } = req.params;
 
     const event = await findEventByID(deps.db, eventID);
+
+    if (!event) {
+      res.status(404).json({ error: "Event not found" });
+      return;
+    }
+
+    res.json({ event });
+  });
+
+  router.get("/:eventID/:fingerprint", async (req, res) => {
+    const { eventID, fingerprint } = req.params;
+
+    const event = await getEventForGuest(deps.db, eventID, fingerprint);
 
     if (!event) {
       res.status(404).json({ error: "Event not found" });

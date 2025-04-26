@@ -6,6 +6,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^4.6.2",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-dialog": "^1.1.11",
     "@tanstack/react-query": "^4.36.1",

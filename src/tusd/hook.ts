@@ -9,6 +9,7 @@ export const postCreateRequestSchema = v.object({
         filename: v.string(),
         mimeType: v.string(),
         eventID: v.string(),
+        fingerprint: v.string(),
       }),
     }),
   }),

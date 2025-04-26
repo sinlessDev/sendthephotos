@@ -21,6 +21,7 @@ export function createHookHandler(db: DB) {
           mimeType: hookRequest.output.Event.Upload.MetaData.mimeType,
         },
         eventId: hookRequest.output.Event.Upload.MetaData.eventID,
+        fingerprint: hookRequest.output.Event.Upload.MetaData.fingerprint,
       });
       res.status(200).json({});
       return;

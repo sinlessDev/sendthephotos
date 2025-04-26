@@ -1,8 +1,12 @@
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useParams } from "wouter";
-import { getEvent } from "../events/api.ts";
 import * as tus from "tus-js-client";
-import { deleteUpload } from "./api.ts";
+import { Link, useParams } from "wouter";
+import { deleteUpload, getEventForGuest } from "./api.ts";
+
+const fingerprint = await FingerprintJS.load()
+  .then((fp) => fp.get())
+  .then((result) => result.visitorId);
 
 export function GuestRoute() {
   const { eventID } = useParams<{ eventID: string }>();
@@ -11,7 +15,7 @@ export function GuestRoute() {
 
   const eventQuery = useQuery({
     queryKey: ["event", eventID],
-    queryFn: () => getEvent(eventID),
+    queryFn: () => getEventForGuest(eventID, fingerprint),
   });
 
   const deleteUploadMutation = useMutation({
@@ -31,7 +35,7 @@ export function GuestRoute() {
     );
   }
 
-  const onFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       throw new Error("No files coming from input");
     }
@@ -43,6 +47,7 @@ export function GuestRoute() {
           filename: file.name,
           mimeType: file.type,
           eventID,
+          fingerprint,
         },
         onSuccess() {
           queryClient.invalidateQueries({ queryKey: ["event", eventID] });
@@ -130,21 +135,23 @@ export function GuestRoute() {
                       controls
                     />
                   )}
-                  <button
-                    onClick={() => deleteUploadMutation.mutate(upload.id)}
-                    className="absolute -top-3 -right-3 bg-red-600 rounded-full text-white size-11 flex items-center justify-center active:bg-red-700"
-                  >
-                    <span
-                      className="material-symbols-sharp"
-                      style={{
-                        fontSize: "24px",
-                        fontVariationSettings:
-                          "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
-                      }}
+                  {upload.deletable && (
+                    <button
+                      onClick={() => deleteUploadMutation.mutate(upload.id)}
+                      className="absolute -top-3 -right-3 bg-red-600 rounded-full text-white size-11 flex items-center justify-center active:bg-red-700"
                     >
-                      delete
-                    </span>
-                  </button>
+                      <span
+                        className="material-symbols-sharp"
+                        style={{
+                          fontSize: "24px",
+                          fontVariationSettings:
+                            "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
+                        }}
+                      >
+                        delete
+                      </span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

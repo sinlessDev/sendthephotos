@@ -13,6 +13,7 @@ export const uploads = pgTable("uploads", {
   id: text().primaryKey(),
   metadata: jsonb().$type<{ filename: string; mimeType: string }>().notNull(),
   eventId: uuid("event_id").notNull(),
+  fingerprint: text().notNull(),
 });
 
 export const uploadsRel = relations(uploads, ({ one }) => ({
