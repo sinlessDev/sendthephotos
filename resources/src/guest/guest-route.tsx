@@ -1,7 +1,8 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "wouter";
 import { getEvent } from "../events/api.ts";
 import * as tus from "tus-js-client";
+import { deleteUpload } from "./api.ts";
 
 export function GuestRoute() {
   const { eventID } = useParams<{ eventID: string }>();
@@ -11,6 +12,13 @@ export function GuestRoute() {
   const eventQuery = useQuery({
     queryKey: ["event", eventID],
     queryFn: () => getEvent(eventID),
+  });
+
+  const deleteUploadMutation = useMutation({
+    mutationFn: (uploadID: string) => deleteUpload(uploadID),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventID] });
+    },
   });
 
   const noEvent = !eventQuery.data;
@@ -91,11 +99,24 @@ export function GuestRoute() {
       ) : (
         <div className="mt-10 grid grid-cols-4 gap-4">
           {eventQuery.data.event.uploads.map((upload) => (
-            <img
-              key={upload.id}
-              src={`/files/${upload.id}`}
-              alt={upload.metadata.filename}
-            />
+            <div key={upload.id} className="relative">
+              <img src={`/files/${upload.id}`} alt={upload.metadata.filename} />
+              <button
+                onClick={() => deleteUploadMutation.mutate(upload.id)}
+                className="absolute -top-3 -right-3 bg-red-600 rounded-full text-white size-11 flex items-center justify-center active:bg-red-700"
+              >
+                <span
+                  className="material-symbols-sharp"
+                  style={{
+                    fontSize: "24px",
+                    fontVariationSettings:
+                      "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
+                  }}
+                >
+                  delete
+                </span>
+              </button>
+            </div>
           ))}
         </div>
       )}
