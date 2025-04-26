@@ -13,3 +13,17 @@ export const postCreateRequestSchema = v.object({
     }),
   }),
 });
+
+export const postTerminateRequestSchema = v.object({
+  Type: v.literal("post-terminate"),
+  Event: v.object({
+    Upload: v.object({
+      ID: v.string(),
+    }),
+  }),
+});
+
+export const hookRequestSchema = v.union([
+  postCreateRequestSchema,
+  postTerminateRequestSchema,
+]);
