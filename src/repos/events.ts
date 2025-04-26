@@ -168,3 +168,7 @@ export async function getEventPaid(db: DB, eventID: string) {
 
   return event.paid;
 }
+
+export async function deleteEvent(db: DB, eventID: string) {
+  await db.delete(events).where(eq(events.id, eventID));
+}

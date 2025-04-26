@@ -91,3 +91,13 @@ export async function toggleUploadVisibility(uploadID: string) {
     throw new Error("Failed to toggle upload visibility");
   }
 }
+
+export async function deleteEvent(eventID: string) {
+  const response = await fetch(`/api/events/${eventID}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete event");
+  }
+}

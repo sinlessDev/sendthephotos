@@ -1,9 +1,11 @@
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, Route, Switch, useLocation, useParams } from "wouter";
 import {
   createEvent,
+  deleteEvent,
   getAllEvents,
   getEvent,
   toggleUploadVisibility,
@@ -174,8 +176,6 @@ function EventsList() {
 function EventDetails() {
   const { eventID } = useParams<{ eventID: string }>();
 
-  const queryClient = useQueryClient();
-
   const [uploads, setUploads] = useState<
     {
       id: string;
@@ -193,6 +193,15 @@ function EventDetails() {
       const event = await getEvent(eventID);
       setUploads(event.event.uploads);
       return event;
+    },
+  });
+
+  const [, navigate] = useLocation();
+
+  const deleteEventMutation = useMutation({
+    mutationFn: deleteEvent,
+    onSuccess() {
+      navigate("~/events");
     },
   });
 
@@ -276,7 +285,7 @@ function EventDetails() {
           <div className="flex items-center gap-2">
             <QrCodeDialog>
               <QrCodeDialogTrigger asChild>
-                <button className="bg-white hover:bg-stone-200 border border-black/25 p-2 flex items-center justify-center rounded-full">
+                <button className="bg-white active:bg-stone-200 border border-black/25 p-2 flex items-center justify-center rounded-full">
                   <span
                     className="material-symbols-sharp"
                     style={{
@@ -307,6 +316,47 @@ function EventDetails() {
                 open_in_new
               </span>
             </a>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button className="bg-stone-500 active:bg-stone-600 text-white p-2 flex items-center justify-center rounded-full">
+                  <span
+                    className="material-symbols-sharp"
+                    style={{
+                      fontSize: "24px",
+                      fontVariationSettings:
+                        "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
+                    }}
+                  >
+                    settings
+                  </span>
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  className="rounded-md bg-white p-2.5 shadow-lg"
+                  sideOffset={8}
+                >
+                  <DropdownMenu.Item
+                    onSelect={() => {
+                      deleteEventMutation.mutate(eventID);
+                    }}
+                    className="w-full text-white font-semibold text-base active:bg-red-600 bg-red-500 active:text-white rounded-sm p-2 flex items-center gap-x-1.5 select-none"
+                  >
+                    <span
+                      className="material-symbols-sharp"
+                      style={{
+                        fontSize: "24px",
+                        fontVariationSettings:
+                          "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24",
+                      }}
+                    >
+                      delete_forever
+                    </span>
+                    Delete event
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           </div>
         </div>
         {eventQuery.data.event.stats.totalUploadsCount > 0 && (
