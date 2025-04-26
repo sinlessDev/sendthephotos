@@ -63,7 +63,7 @@ export function GuestRoute() {
           .sort(
             (a, b) =>
               new Date(b.creationTime).getTime() -
-              new Date(a.creationTime).getTime()
+              new Date(a.creationTime).getTime(),
           )
           .at(0);
 
@@ -212,18 +212,18 @@ export function GalleryRoute() {
   }
 
   const uploadIDIndex = eventQuery.data.event.uploads.findIndex(
-    (upload) => upload.id === uploadID
+    (upload) => upload.id === uploadID,
   );
 
   const nextUpload = eventQuery.data.event.uploads.at(
     uploadIDIndex + 1 > eventQuery.data.event.uploads.length - 1
       ? 0
-      : uploadIDIndex + 1
+      : uploadIDIndex + 1,
   )?.id;
   const previousUpload = eventQuery.data.event.uploads.at(
     uploadIDIndex - 1 < 0
       ? eventQuery.data.event.uploads.length - 1
-      : uploadIDIndex - 1
+      : uploadIDIndex - 1,
   )?.id;
 
   const noUpload = !uploadQuery.data;

@@ -26,7 +26,7 @@ type EventForGuest = {
 
 export async function getEventForGuest(
   eventID: string,
-  fingerprint: string
+  fingerprint: string,
 ): Promise<EventForGuest> {
   const res = await fetch(`/api/events/${eventID}/${fingerprint}`);
 

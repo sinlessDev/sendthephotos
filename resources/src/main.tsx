@@ -31,5 +31,5 @@ createRoot(rootEl).render(
         </Route>
       </Switch>
     </QueryClientProvider>
-  </StrictMode>
+  </StrictMode>,
 );

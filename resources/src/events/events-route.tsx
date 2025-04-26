@@ -228,8 +228,8 @@ function EventDetails() {
       prev.map((upload) =>
         upload.id === uploadID
           ? { ...upload, visible: !upload.visible }
-          : upload
-      )
+          : upload,
+      ),
     );
   };
 
