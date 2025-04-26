@@ -9,7 +9,7 @@ type CreateEventArgs = {
 };
 
 export async function createEvent(
-  args: CreateEventArgs
+  args: CreateEventArgs,
 ): Promise<CreateEventResponse> {
   const response = await fetch("/api/events", {
     method: "POST",

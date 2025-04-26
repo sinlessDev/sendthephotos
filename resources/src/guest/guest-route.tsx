@@ -62,7 +62,7 @@ export function GuestRoute() {
           .sort(
             (a, b) =>
               new Date(b.creationTime).getTime() -
-              new Date(a.creationTime).getTime()
+              new Date(a.creationTime).getTime(),
           )
           .at(0);
 

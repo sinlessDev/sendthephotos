@@ -61,7 +61,7 @@ export async function findAllEvents(db: DB) {
 export async function getEventForGuest(
   db: DB,
   eventID: string,
-  fingerprint: string
+  fingerprint: string,
 ) {
   const event = await db.query.events.findFirst({
     where: eq(events.id, eventID),
