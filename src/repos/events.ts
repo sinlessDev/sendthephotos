@@ -170,5 +170,8 @@ export async function getEventPaid(db: DB, eventID: string) {
 }
 
 export async function deleteEvent(db: DB, eventID: string) {
-  await db.delete(events).where(eq(events.id, eventID));
+  await db.transaction(async (tx) => {
+    await tx.delete(uploads).where(eq(uploads.eventId, eventID));
+    await tx.delete(events).where(eq(events.id, eventID));
+  });
 }
