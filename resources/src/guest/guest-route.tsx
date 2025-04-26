@@ -20,8 +20,8 @@ export function GuestRoute() {
 
   const deleteUploadMutation = useMutation({
     mutationFn: (uploadID: string) => deleteUpload(uploadID),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["event", eventID] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["event", eventID] });
     },
   });
 
@@ -36,6 +36,8 @@ export function GuestRoute() {
   }
 
   const onFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const batchID = crypto.randomUUID();
+
     if (!e.target.files) {
       throw new Error("No files coming from input");
     }
@@ -48,6 +50,7 @@ export function GuestRoute() {
           mimeType: file.type,
           eventID,
           fingerprint,
+          batchID,
         },
         onSuccess() {
           queryClient.invalidateQueries({ queryKey: ["event", eventID] });
@@ -105,7 +108,8 @@ export function GuestRoute() {
           />
           <label
             htmlFor="uploads"
-            className="bg-green-700 text-white active:bg-green-800 px-2.5 h-12 flex items-center justify-center max-w-fit rounded-md font-semibold"
+            aria-disabled={!eventQuery.data.event.uploadAvailable}
+            className="bg-green-700 text-white active:bg-green-800 px-2.5 h-12 flex items-center justify-center max-w-fit rounded-md font-semibold aria-disabled:bg-stone-200 aria-disabled:text-stone-400"
           >
             Upload files
           </label>

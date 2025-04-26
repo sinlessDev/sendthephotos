@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import type { DB } from "../db.ts";
 import { events, uploads } from "../db.ts";
 
@@ -23,7 +23,17 @@ export async function mustFindEventByID(db: DB, eventID: string) {
     throw new Error(`Query failed: Event ${eventID} not found`);
   }
 
-  return event;
+  let uploadAvailable: boolean;
+
+  const [count] = await getUniqBatches(db, eventID);
+
+  if (event.paid) {
+    uploadAvailable = true;
+  } else {
+    uploadAvailable = count < 1;
+  }
+
+  return { ...event, uploadAvailable };
 }
 
 export async function findEventByID(db: DB, eventID: string) {
@@ -84,9 +94,37 @@ export async function getEventForGuest(
     })
     .toSorted((a, b) => (b.deletable ? 1 : 0) - (a.deletable ? 1 : 0));
 
+  let uploadAvailable: boolean;
+
+  const [count] = await getUniqBatches(db, eventID);
+
+  if (event.paid) {
+    uploadAvailable = true;
+  } else {
+    uploadAvailable = count < 1;
+  }
+
   return {
     name: event.name,
     paid: event.paid,
     uploads: markedUploads,
+    uploadAvailable,
   };
+}
+
+export async function getUniqBatches(db: DB, eventID: string) {
+  const batchIDs = await db
+    .selectDistinctOn([uploads.batchId], {
+      batchId: uploads.batchId,
+    })
+    .from(uploads)
+    .where(eq(uploads.eventId, eventID));
+
+  return [batchIDs.length, batchIDs.map((batch) => batch.batchId)] as const;
+}
+
+export async function getEventPaid(db: DB, eventID: string) {
+  const event = await mustFindEventByID(db, eventID);
+
+  return event.paid;
 }

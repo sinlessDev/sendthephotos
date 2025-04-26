@@ -14,6 +14,7 @@ export const uploads = pgTable("uploads", {
   metadata: jsonb().$type<{ filename: string; mimeType: string }>().notNull(),
   eventId: uuid("event_id").notNull(),
   fingerprint: text().notNull(),
+  batchId: text().notNull(),
 });
 
 export const uploadsRel = relations(uploads, ({ one }) => ({

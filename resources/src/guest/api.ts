@@ -15,6 +15,7 @@ type EventForGuest = {
   event: {
     name: string;
     paid: boolean;
+    uploadAvailable: boolean;
     uploads: {
       id: string;
       metadata: { filename: string; mimeType: string };

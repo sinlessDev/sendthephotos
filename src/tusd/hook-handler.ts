@@ -1,8 +1,9 @@
 import type express from "express";
-import type { DB } from "../db.ts";
-import { hookRequestSchema, postCreateRequestSchema } from "./hook.ts";
 import * as v from "valibot";
+import type { DB } from "../db.ts";
+import { getEventPaid, getUniqBatches } from "../repos/events.ts";
 import { deleteUpload, insertUpload } from "../repos/uploads.ts";
+import { hookRequestSchema } from "./hook.ts";
 
 export function createHookHandler(db: DB) {
   return async (req: express.Request, res: express.Response) => {
@@ -11,6 +12,42 @@ export function createHookHandler(db: DB) {
     if (!hookRequest.success) {
       res.status(200).json({});
       return;
+    }
+
+    if (hookRequest.output.Type === "pre-create") {
+      const eventPaid = await getEventPaid(
+        db,
+        hookRequest.output.Event.Upload.MetaData.eventID
+      );
+
+      if (eventPaid) {
+        res.status(200).json({});
+        return;
+      }
+
+      const [count, batches] = await getUniqBatches(
+        db,
+        hookRequest.output.Event.Upload.MetaData.eventID
+      );
+
+      if (
+        count === 1 &&
+        !batches.includes(hookRequest.output.Event.Upload.MetaData.batchID)
+      ) {
+        res.status(200).json({
+          HTTPResponse: {
+            StatusCode: 429,
+            Body: JSON.stringify({
+              error: "You have to activate the event to continue",
+            }),
+            Header: {
+              "Content-Type": "application/json",
+            },
+          },
+          RejectUpload: true,
+        });
+        return;
+      }
     }
 
     if (hookRequest.output.Type === "post-create") {
@@ -22,6 +59,7 @@ export function createHookHandler(db: DB) {
         },
         eventId: hookRequest.output.Event.Upload.MetaData.eventID,
         fingerprint: hookRequest.output.Event.Upload.MetaData.fingerprint,
+        batchId: hookRequest.output.Event.Upload.MetaData.batchID,
       });
       res.status(200).json({});
       return;
