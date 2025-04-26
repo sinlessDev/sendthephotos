@@ -12,13 +12,9 @@ export {
 
 type QrCodeDialogContentProps = {
   url: string;
-  onDownload: () => void | Promise<void>;
 };
 
-export function QrCodeDialogContent({
-  url,
-  onDownload,
-}: QrCodeDialogContentProps) {
+export function QrCodeDialogContent({ url }: QrCodeDialogContentProps) {
   return (
     <DialogPortal>
       <DialogContent className="fixed bg-white inset-0 p-7 flex items-center justify-center *:data-[slot='close']:top-7 *:data-[slot='close']:right-7 *:data-[slot='close']:absolute *:data-[slot='download']:bottom-7 *:data-[slot='download']:right-7 *:data-[slot='download']:absolute">
@@ -28,7 +24,7 @@ export function QrCodeDialogContent({
         </DialogDescription>
         <img className="h-full aspect-square" src={url} alt="QR-код" />
         <DialogClose asChild>
-          <button className="rounded-full bg-white hover:bg-stone-200 border border-black/25 p-2 flex items-center justify-center absolute top-7 right-7">
+          <button className="rounded-full bg-white active:bg-stone-200 border border-black/25 p-2 flex items-center justify-center absolute top-7 right-7">
             <span
               className="material-symbols-sharp"
               style={{
@@ -41,8 +37,9 @@ export function QrCodeDialogContent({
             </span>
           </button>
         </DialogClose>
-        <button
-          onClick={onDownload}
+        <a
+          download
+          href={url}
           className="rounded-full bg-white hover:bg-stone-200 border border-black/25 p-2 flex items-center justify-center absolute bottom-7 right-7"
         >
           <span
@@ -55,7 +52,7 @@ export function QrCodeDialogContent({
           >
             download
           </span>
-        </button>
+        </a>
       </DialogContent>
     </DialogPortal>
   );

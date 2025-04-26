@@ -1,7 +1,7 @@
 import { Router } from "express";
 import type { DB } from "../db.ts";
 import { findEventByID, insertEvent, findAllEvents } from "../repos/events.ts";
-import { toDataURL } from "qrcode";
+import { toFileStream } from "qrcode";
 import ZipStream from "zip-stream";
 
 export type EventsDeps = {
@@ -30,13 +30,25 @@ export function createEventsRouter(deps: EventsDeps) {
 
     const event = await findEventByID(deps.db, eventID);
 
-    const qrCodeURL = await toDataURL(`http://localhost:5173/${eventID}`, {
-      width: 1024,
+    res.json({ event });
+  });
+
+  router.get("/:eventID/qr", async (req, res) => {
+    const { eventID } = req.params;
+
+    const event = await findEventByID(deps.db, eventID);
+
+    res.setHeader("Content-Type", "image/png");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${event.name}.png"`
+    );
+
+    toFileStream(res, `http://localhost:5173/${eventID}`, {
+      width: 512,
       margin: 0,
       errorCorrectionLevel: "high",
     });
-
-    res.json({ event: { ...event, qrCodeURL } });
   });
 
   router.get("/:eventID/zip", async (req, res) => {
