@@ -128,11 +128,37 @@ function EventsList() {
             {eventsQuery.data.events.map((event) => (
               <li
                 key={event.id}
-                className="bg-white p-4 rounded-lg border-2 border-black/15"
+                className="px-4.5 py-6 rounded-lg bg-black size-64 flex flex-col justify-end relative"
               >
+                {event.lastUpload &&
+                  event.lastUpload.metadata.mimeType.startsWith("image/") && (
+                    <div className="absolute inset-0">
+                      <img
+                        src={`/files/${event.lastUpload.id}`}
+                        alt={event.lastUpload.metadata.filename}
+                        className="w-full h-full object-cover object-center rounded-lg opacity-30"
+                      />
+                    </div>
+                  )}
+                {event.lastUpload &&
+                  event.lastUpload.metadata.mimeType.startsWith("video/") && (
+                    <div className="absolute inset-0">
+                      <video
+                        src={`/files/${event.lastUpload.id}`}
+                        className="w-full h-full object-cover object-center rounded-lg opacity-30"
+                      />
+                    </div>
+                  )}
+                <p className="text-white text-lg font-medium leading-none relative z-2">
+                  {event.stats.totalUploadsCount
+                    ? event.stats.totalUploadsCount === 1
+                      ? "1 upload"
+                      : `${event.stats.totalUploadsCount} uploads`
+                    : "No uploads yet"}
+                </p>
                 <Link
                   href={`/${event.id}`}
-                  className="text-blue-600 underline decoration-2 hover:text-blue-800 text-lg font-medium leading-none"
+                  className="text-white underline decoration-2 text-xl font-semibold mt-1 relative z-2"
                 >
                   {event.name}
                 </Link>

@@ -70,7 +70,31 @@ export async function insertEvent(db: DB, event: NewEvent) {
 }
 
 export async function findAllEvents(db: DB) {
-  return await db.query.events.findMany();
+  const events = await db.query.events.findMany({
+    with: {
+      uploads: true,
+    },
+  });
+
+  return events.map((event) => {
+    const totalUploadsCount = event.uploads.length;
+    const videoUploadsCount = event.uploads.filter((upload) =>
+      upload.metadata.mimeType.startsWith("video/")
+    ).length;
+    const photoUploadsCount = totalUploadsCount - videoUploadsCount;
+
+    const lastUpload = event.uploads.at(-1);
+
+    return {
+      ...event,
+      stats: {
+        totalUploadsCount,
+        videoUploadsCount,
+        photoUploadsCount,
+      },
+      lastUpload: lastUpload ?? null,
+    };
+  });
 }
 
 export async function getEventForGuest(

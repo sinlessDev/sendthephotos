@@ -30,6 +30,18 @@ type GetEventsResponse = {
   events: {
     id: string;
     name: string;
+    stats: {
+      totalUploadsCount: number;
+      videoUploadsCount: number;
+      photoUploadsCount: number;
+    };
+    lastUpload: {
+      id: string;
+      metadata: {
+        filename: string;
+        mimeType: string;
+      };
+    } | null;
   }[];
 };
 
