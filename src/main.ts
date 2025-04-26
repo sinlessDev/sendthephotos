@@ -4,7 +4,9 @@ import { createDB } from "./db.ts";
 
 const conf = createEnvConf();
 const db = createDB(conf);
-const app = await createApp({ conf, db });
+const deps = Object.freeze({ conf, db });
+
+const app = await createApp(deps);
 
 const server = app.listen(conf.port, conf.host, () => {
   console.info(`Server: Server is running on http://${conf.host}:${conf.port}`);
@@ -13,6 +15,7 @@ const server = app.listen(conf.port, conf.host, () => {
 ["SIGINT", "SIGTERM"].forEach((signal) => {
   process.on(signal, () => {
     console.info("Server: Gracefully shutting down");
+
     server.close((err) => {
       if (err) {
         console.warn("Server: Error closing connection", err);
@@ -22,5 +25,11 @@ const server = app.listen(conf.port, conf.host, () => {
         process.exit(0);
       }
     });
+
+    setTimeout(() => {
+      console.warn("Server: Force closing all connections");
+      server.closeAllConnections();
+      process.exit(0);
+    }, 5000);
   });
 });

@@ -2,6 +2,12 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Run tusd",
+      "type": "shell",
+      "command": "pnpm dev:tusd",
+      "problemMatcher": []
+    },
+    {
       "label": "Run pg",
       "type": "shell",
       "command": "pnpm dev:pg",
@@ -21,7 +27,7 @@
     },
     {
       "label": "Run dev",
-      "dependsOn": ["Run pg", "Run server", "Serve resources"],
+      "dependsOn": ["Run pg", "Run tusd", "Run server", "Serve resources"],
       "dependsOrder": "parallel",
       "problemMatcher": []
     },

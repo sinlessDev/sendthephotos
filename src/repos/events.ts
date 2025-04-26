@@ -12,8 +12,7 @@ export async function findEventByID(db: DB, eventID: string) {
       uploads: {
         columns: {
           id: true,
-          name: true,
-          url: true,
+          metadata: true,
         },
       },
     },

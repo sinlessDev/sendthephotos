@@ -49,8 +49,10 @@ type GetEventResponse = {
     qrCodeURL: string;
     uploads: {
       id: string;
-      name: string;
-      url: string;
+      metadata: {
+        filename: string;
+        mimeType: string;
+      };
     }[];
   };
 };

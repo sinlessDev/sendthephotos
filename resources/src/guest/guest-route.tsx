@@ -31,12 +31,11 @@ export function GuestRoute() {
     const file = e.target.files[0];
 
     const upload = new tus.Upload(file, {
-      endpoint: "/api/uploads",
+      endpoint: "/files",
       metadata: {
         filename: file.name,
-      },
-      headers: {
-        "X-Event-ID": eventID,
+        mimeType: file.type,
+        eventID,
       },
       onSuccess() {
         queryClient.invalidateQueries({ queryKey: ["event", eventID] });
@@ -83,7 +82,11 @@ export function GuestRoute() {
       ) : (
         <div className="mt-10 grid grid-cols-4 gap-4">
           {eventQuery.data.event.uploads.map((upload) => (
-            <img key={upload.id} src={upload.url} alt={upload.name} />
+            <img
+              key={upload.id}
+              src={`/files/${upload.id}`}
+              alt={upload.metadata.filename}
+            />
           ))}
         </div>
       )}

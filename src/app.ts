@@ -1,12 +1,11 @@
 import express from "express";
 import { type Conf } from "./conf.ts";
 import { createEventsRouter, type EventsDeps } from "./routers/events.ts";
-import { createUploadsRouter, type UploadsDeps } from "./routers/uploads.ts";
+import { createHookHandler } from "./tusd/hook-handler.ts";
 
 type AppDeps = {
   conf: Conf;
-} & UploadsDeps &
-  EventsDeps;
+} & EventsDeps;
 
 export async function createApp(deps: AppDeps) {
   const app = express();
@@ -19,7 +18,7 @@ export async function createApp(deps: AppDeps) {
     app.use(morgan("tiny"));
   }
 
-  app.use("/api/uploads", createUploadsRouter(deps));
+  app.post("/tusd-hook", createHookHandler(deps.db));
   app.use("/api/events", createEventsRouter(deps));
 
   return app;

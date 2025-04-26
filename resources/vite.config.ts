@@ -8,7 +8,10 @@ export default defineConfig({
     proxy: {
       "/api": {
         changeOrigin: true,
-        target: "http://localhost:3000",
+        target: "http://localhost:3030",
+      },
+      "/files": {
+        target: "http://localhost:8080",
       },
     },
   },
