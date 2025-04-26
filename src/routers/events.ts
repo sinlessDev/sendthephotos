@@ -44,19 +44,6 @@ export function createEventsRouter(deps: EventsDeps) {
     res.json({ event });
   });
 
-  router.get("/:eventID/:fingerprint", async (req, res) => {
-    const { eventID, fingerprint } = req.params;
-
-    const event = await getEventForGuest(deps.db, eventID, fingerprint);
-
-    if (!event) {
-      res.status(404).json({ error: "Event not found" });
-      return;
-    }
-
-    res.json({ event });
-  });
-
   router.get("/:eventID/qr", async (req, res) => {
     const { eventID } = req.params;
 
@@ -73,6 +60,19 @@ export function createEventsRouter(deps: EventsDeps) {
       margin: 0,
       errorCorrectionLevel: "high",
     });
+  });
+
+  router.get("/:eventID/:fingerprint", async (req, res) => {
+    const { eventID, fingerprint } = req.params;
+
+    const event = await getEventForGuest(deps.db, eventID, fingerprint);
+
+    if (!event) {
+      res.status(404).json({ error: "Event not found" });
+      return;
+    }
+
+    res.json({ event });
   });
 
   router.get("/:eventID/zip", async (req, res) => {
