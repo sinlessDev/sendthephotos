@@ -1,3 +1,4 @@
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
@@ -196,6 +197,8 @@ function EventDetails() {
     },
   });
 
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const [, navigate] = useLocation();
 
   const deleteEventMutation = useMutation({
@@ -259,6 +262,41 @@ function EventDetails() {
 
   return (
     <div>
+      <AlertDialog.Root
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+      >
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay className="fixed inset-0 bg-black/70" />
+          <AlertDialog.Content className="fixed left-1/2 top-1/2 max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-[25px] shadow-lg">
+            <AlertDialog.Title className="text-xl font-semibold text-gray-900">
+              Are you absolutely sure?
+            </AlertDialog.Title>
+            <AlertDialog.Description className="mt-3 text-lg text-stone-700">
+              This will permanently delete your event and all guest uploads. You
+              won't be able to recover it.
+            </AlertDialog.Description>
+            <div className="flex justify-end gap-4 mt-7">
+              <AlertDialog.Cancel asChild>
+                <button className="rounded-md bg-stone-300 text-stone-900 h-11 px-2.5 font-medium leading-none active:bg-stone-400 select-none">
+                  Cancel
+                </button>
+              </AlertDialog.Cancel>
+              <AlertDialog.Action asChild>
+                <button
+                  onClick={() => {
+                    deleteEventMutation.mutate(eventID);
+                    setDeleteDialogOpen(false);
+                  }}
+                  className="rounded-md bg-red-500 h-11 px-2.5 font-medium leading-none text-white active:bg-red-600 select-none"
+                >
+                  Yes, delete event
+                </button>
+              </AlertDialog.Action>
+            </div>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
       {!eventQuery.data.event.paid && (
         <div className="bg-striped bg-striped-from-amber-200 bg-striped-to-amber-100 border-b border-b-black/10 shadow-xs">
           <p className="max-w-5xl mx-auto px-7 py-4 text-base font-semibold text-amber-700 text-center">
@@ -338,7 +376,11 @@ function EventDetails() {
                 >
                   <DropdownMenu.Item
                     onSelect={() => {
-                      deleteEventMutation.mutate(eventID);
+                      if (eventQuery.data.event.stats.totalUploadsCount > 0) {
+                        setDeleteDialogOpen(true);
+                      } else {
+                        deleteEventMutation.mutate(eventID);
+                      }
                     }}
                     className="w-full text-white font-semibold text-base active:bg-red-600 bg-red-500 active:text-white rounded-sm p-2 flex items-center gap-x-1.5 select-none"
                   >
