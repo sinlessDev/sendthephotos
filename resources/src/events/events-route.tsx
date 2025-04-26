@@ -197,6 +197,31 @@ function EventDetails() {
 
   const noUploads = uploads.length === 0;
 
+  let statsMessage: string;
+
+  if (eventQuery.data.event.stats.photoUploadsCount === 0) {
+    if (eventQuery.data.event.stats.videoUploadsCount === 1) {
+      statsMessage = "1 video uploaded";
+    } else {
+      statsMessage = `${eventQuery.data.event.stats.videoUploadsCount} videos uploaded`;
+    }
+  } else if (eventQuery.data.event.stats.videoUploadsCount === 0) {
+    if (eventQuery.data.event.stats.photoUploadsCount === 1) {
+      statsMessage = "1 photo uploaded";
+    } else {
+      statsMessage = `${eventQuery.data.event.stats.photoUploadsCount} photos uploaded`;
+    }
+  } else {
+    if (
+      eventQuery.data.event.stats.photoUploadsCount === 1 &&
+      eventQuery.data.event.stats.videoUploadsCount === 1
+    ) {
+      statsMessage = "1 photo and 1 video uploaded";
+    } else {
+      statsMessage = `${eventQuery.data.event.stats.photoUploadsCount} photos and ${eventQuery.data.event.stats.videoUploadsCount} videos uploaded`;
+    }
+  }
+
   return (
     <div>
       {!eventQuery.data.event.paid && (
@@ -258,6 +283,11 @@ function EventDetails() {
             </a>
           </div>
         </div>
+        {eventQuery.data.event.stats.totalUploadsCount > 0 && (
+          <div className="mt-2">
+            <p className="text-lg font-medium">{statsMessage}</p>
+          </div>
+        )}
         {noUploads ? (
           <div className="mt-10 outline-2 outline-dashed outline-black/20 rounded-xl flex flex-col items-center justify-center p-9 max-w-lg mx-auto bg-white">
             <h2 className="text-2xl font-bold">No uploads yet</h2>

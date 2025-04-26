@@ -56,6 +56,11 @@ type GetEventResponse = {
       };
       visible: boolean;
     }[];
+    stats: {
+      totalUploadsCount: number;
+      videoUploadsCount: number;
+      photoUploadsCount: number;
+    };
   };
 };
 

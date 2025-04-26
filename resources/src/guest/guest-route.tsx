@@ -119,7 +119,7 @@ export function GuestRoute() {
           <div className="mt-10 outline-2 outline-dashed outline-black/20 rounded-xl flex flex-col items-center justify-center p-9 max-w-lg mx-auto bg-white">
             <h2 className="text-2xl font-bold">No uploads yet</h2>
             <p className="text-lg font-medium">
-              Don't be shy, upload some photos!
+              Don't be shy, share some memories!
             </p>
           </div>
         ) : (

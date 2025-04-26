@@ -34,7 +34,21 @@ export async function mustFindEventByID(db: DB, eventID: string) {
     uploadAvailable = count < 1;
   }
 
-  return { ...event, uploadAvailable };
+  const totalUploadsCount = event.uploads.length;
+  const videoUploadsCount = event.uploads.filter((upload) =>
+    upload.metadata.mimeType.startsWith("video/")
+  ).length;
+  const photoUploadsCount = totalUploadsCount - videoUploadsCount;
+
+  return {
+    ...event,
+    uploadAvailable,
+    stats: {
+      totalUploadsCount,
+      videoUploadsCount,
+      photoUploadsCount,
+    },
+  };
 }
 
 export async function findEventByID(db: DB, eventID: string) {
