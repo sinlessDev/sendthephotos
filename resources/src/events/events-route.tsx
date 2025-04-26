@@ -227,15 +227,26 @@ function EventDetails() {
           </p>
         </div>
       ) : (
-        <div className="mt-10 grid grid-cols-4 gap-4">
-          {eventQuery.data.event.uploads.map((upload) => (
-            <img
-              key={upload.id}
-              src={`/files/${upload.id}`}
-              alt={upload.metadata.filename}
-            />
-          ))}
-        </div>
+        <>
+          <div className="mt-10 grid grid-cols-4 gap-4">
+            {eventQuery.data.event.uploads.map((upload) => (
+              <img
+                key={upload.id}
+                src={`/files/${upload.id}`}
+                alt={upload.metadata.filename}
+              />
+            ))}
+          </div>
+          <div className="flex justify-center mt-7">
+            <a
+              download
+              href={`/api/events/${eventID}/zip`}
+              className="bg-green-700 text-white active:bg-green-800 px-2.5 h-12 flex items-center justify-center max-w-fit rounded-md font-semibold"
+            >
+              Download all photos
+            </a>
+          </div>
+        </>
       )}
     </div>
   );
