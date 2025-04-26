@@ -33,7 +33,7 @@ const createEventSchema = v.object({
 });
 
 function NewEventForm() {
-  const createEventForm = useForm<v.InferInput<typeof createEventSchema>>({
+  const createEventForm = useForm({
     resolver: valibotResolver(createEventSchema),
     defaultValues: {
       name: "",
@@ -46,7 +46,7 @@ function NewEventForm() {
 
   const [, navigate] = useLocation();
 
-  const onSubmit = (data: v.InferInput<typeof createEventSchema>) => {
+  const onSubmit = (data: any) => {
     createEventMutation.mutate(data, {
       onSuccess: () => {
         navigate("/");
