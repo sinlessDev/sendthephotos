@@ -10,7 +10,7 @@
     {
       "label": "Run App",
       "type": "shell",
-      "command": "pnpm dev:app",
+      "command": "pnpm dev",
       "problemMatcher": []
     },
     {
