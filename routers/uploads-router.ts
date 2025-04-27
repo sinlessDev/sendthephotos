@@ -4,7 +4,7 @@ import {
   getUploadMetadata,
   getUploadVisibility,
   updateUploadVisibility,
-} from "../repos/uploads.ts";
+} from "../repos/uploads-repo.ts";
 
 export function createUploadsRouter(db: DB) {
   const router = Router();

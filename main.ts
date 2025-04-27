@@ -1,35 +1,39 @@
 import { createApp } from "./app.ts";
-import { createEnvConf } from "./conf.ts";
+import { createConfigFromEnv } from "./config.ts";
 import { createDB } from "./db.ts";
 
-const conf = createEnvConf();
-const db = createDB(conf);
-const deps = Object.freeze({ conf, db });
+const config = createConfigFromEnv();
+const db = createDB(config);
 
-const app = await createApp(deps);
+const app = await createApp(config, db);
 
-const server = app.listen(conf.port, conf.host, () => {
-  console.info(`Server: Server is running on http://${conf.host}:${conf.port}`);
+const server = app.listen(config.port, config.host, (err) => {
+  if (err) {
+    console.error("Failed to start server:", err);
+    process.exit(1);
+  }
+
+  console.info(`Server started at http://${config.host}:${config.port}`);
 });
 
 ["SIGINT", "SIGTERM"].forEach((signal) => {
   process.on(signal, () => {
-    console.info("Server: Gracefully shutting down");
+    console.info("Shutdown initiated");
 
     server.close((err) => {
       if (err) {
-        console.warn("Server: Error closing connection", err);
+        console.error("Failed to close server:", err);
         process.exit(1);
       } else {
-        console.info("Server: Successfully closed connection");
+        console.info("Server closed");
         process.exit(0);
       }
     });
 
     setTimeout(() => {
-      console.warn("Server: Force closing all connections");
+      console.warn("Forcing shutdown - terminating connections");
       server.closeAllConnections();
       process.exit(0);
-    }, 5000);
+    }, config.forceShutdownTimeoutSec * 1000);
   });
 });

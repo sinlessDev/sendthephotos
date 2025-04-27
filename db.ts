@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { boolean, jsonb, pgTable, text, uuid } from "drizzle-orm/pg-core";
-import type { Conf } from "./conf.ts";
+import type { Config } from "./config.ts";
 
 export const events = pgTable("events", {
   id: uuid().primaryKey().defaultRandom(),
@@ -12,7 +12,9 @@ export const events = pgTable("events", {
 export const uploads = pgTable("uploads", {
   id: text().primaryKey(),
   metadata: jsonb().$type<{ filename: string; mimeType: string }>().notNull(),
-  eventId: uuid("event_id").notNull(),
+  eventId: uuid("event_id")
+    .references(() => events.id, { onDelete: "cascade" })
+    .notNull(),
   fingerprint: text().notNull(),
   batchId: text().notNull(),
   visible: boolean("visible").notNull(),
@@ -29,8 +31,8 @@ export const eventsRel = relations(events, ({ many }) => ({
   uploads: many(uploads),
 }));
 
-export function createDB(conf: Conf) {
-  const db = drizzle(conf.databaseURL, {
+export function createDB(config: Config) {
+  const db = drizzle(config.databaseURL, {
     schema: {
       events,
       uploads,

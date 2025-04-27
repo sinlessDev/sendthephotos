@@ -1,4 +1,4 @@
-import { count, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { DB } from "../db.ts";
 import { events, uploads } from "../db.ts";
 

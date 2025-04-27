@@ -7,27 +7,23 @@ import {
   findEventByID,
   getEventForGuest,
   deleteEvent,
-} from "../repos/events.ts";
+} from "../repos/events-repo.ts";
 import { toFileStream } from "qrcode";
 import ZipStream from "zip-stream";
 
-export type EventsDeps = {
-  db: DB;
-};
-
-export function createEventsRouter(deps: EventsDeps) {
+export function createEventsRouter(db: DB) {
   const router = Router();
 
   router.post("/", async (req, res) => {
     const { name } = req.body;
 
-    const eventID = await insertEvent(deps.db, { name, paid: false });
+    const eventID = await insertEvent(db, { name, paid: false });
 
     res.json({ event: { id: eventID } });
   });
 
   router.get("/", async (req, res) => {
-    const events = await findAllEvents(deps.db);
+    const events = await findAllEvents(db);
 
     res.json({ events });
   });
@@ -35,7 +31,7 @@ export function createEventsRouter(deps: EventsDeps) {
   router.get("/:eventID", async (req, res) => {
     const { eventID } = req.params;
 
-    const event = await findEventByID(deps.db, eventID);
+    const event = await findEventByID(db, eventID);
 
     if (!event) {
       res.status(404).json({ error: "Event not found" });
@@ -48,7 +44,7 @@ export function createEventsRouter(deps: EventsDeps) {
   router.delete("/:eventID", async (req, res) => {
     const { eventID } = req.params;
 
-    await deleteEvent(deps.db, eventID);
+    await deleteEvent(db, eventID);
 
     res.status(204).end();
   });
@@ -56,7 +52,7 @@ export function createEventsRouter(deps: EventsDeps) {
   router.get("/:eventID/qr", async (req, res) => {
     const { eventID } = req.params;
 
-    const event = await mustFindEventByID(deps.db, eventID);
+    const event = await mustFindEventByID(db, eventID);
 
     res.setHeader("Content-Type", "image/png");
     res.setHeader(
@@ -74,7 +70,7 @@ export function createEventsRouter(deps: EventsDeps) {
   router.get("/:eventID/:fingerprint", async (req, res) => {
     const { eventID, fingerprint } = req.params;
 
-    const event = await getEventForGuest(deps.db, eventID, fingerprint);
+    const event = await getEventForGuest(db, eventID, fingerprint);
 
     if (!event) {
       res.status(404).json({ error: "Event not found" });
@@ -87,7 +83,7 @@ export function createEventsRouter(deps: EventsDeps) {
   router.get("/:eventID/zip", async (req, res) => {
     const { eventID } = req.params;
 
-    const event = await mustFindEventByID(deps.db, eventID);
+    const event = await mustFindEventByID(db, eventID);
 
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(
