@@ -18,13 +18,13 @@ export async function createApp(config: Config, db: DB) {
         skip(req) {
           if (config.serveAssets) {
             return !["/api", "/tusd"].some((path) =>
-              req.originalUrl.startsWith(path)
+              req.originalUrl.startsWith(path),
             );
           }
 
           return false;
         },
-      })
+      }),
     );
   }
 
