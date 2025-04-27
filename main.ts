@@ -1,6 +1,6 @@
-import { createApp } from "./app.ts";
-import { createConfigFromEnv } from "./config.ts";
-import { createDB } from "./db.ts";
+import { createApp } from "./app/app.ts";
+import { createConfigFromEnv } from "./app/config.ts";
+import { createDB } from "./app/db.ts";
 
 const config = createConfigFromEnv();
 const db = createDB(config);

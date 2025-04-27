@@ -13,12 +13,37 @@ export async function createApp(config: Config, db: DB) {
   if (config.enableHTTPRequestLogging) {
     const { default: morgan } = await import("morgan");
 
-    app.use(morgan("tiny"));
+    app.use(
+      morgan("tiny", {
+        skip(req) {
+          if (config.serveAssets) {
+            return !["/api", "/tusd"].some((path) =>
+              req.originalUrl.startsWith(path)
+            );
+          }
+
+          return false;
+        },
+      })
+    );
   }
 
   app.use("/api/events", createEventsRouter(db));
   app.use("/api/uploads", createUploadsRouter(db));
   app.use("/tusd", createTusdRouter(db));
+
+  if (config.serveAssets) {
+    const { createServer } = await import("vite");
+
+    const vite = await createServer({
+      root: "./assets",
+      server: {
+        middlewareMode: true,
+      },
+    });
+
+    app.use(vite.middlewares);
+  }
 
   return app;
 }

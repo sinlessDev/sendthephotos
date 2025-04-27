@@ -4,6 +4,7 @@ export type Config = {
   host: string;
   port: number;
   enableHTTPRequestLogging: boolean;
+  serveAssets: boolean;
   forceShutdownTimeoutSec: number;
   databaseURL: string;
 };
@@ -15,11 +16,13 @@ const envSchema = v.object({
     v.union([v.literal("true"), v.literal("false")]),
     v.transform((input) => input === "true")
   ),
+  SERVE_ASSETS: v.pipe(
+    v.union([v.literal("true"), v.literal("false")]),
+    v.transform((input) => input === "true")
+  ),
   FORCE_SHUTDOWN_TIMEOUT_SEC: v.pipe(v.string(), v.transform(parseInt)),
   DATABASE_URL: v.string(),
 });
-
-process.env.NODE_ENV = "production";
 
 export function createConfigFromEnv(
   env: Record<string, string | undefined> = process.env
@@ -30,6 +33,7 @@ export function createConfigFromEnv(
     host: safeEnv.HOST,
     port: safeEnv.PORT,
     enableHTTPRequestLogging: safeEnv.ENABLE_HTTP_REQUEST_LOGGING,
+    serveAssets: safeEnv.SERVE_ASSETS,
     forceShutdownTimeoutSec: safeEnv.FORCE_SHUTDOWN_TIMEOUT_SEC,
     databaseURL: safeEnv.DATABASE_URL,
   });
