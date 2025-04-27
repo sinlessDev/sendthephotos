@@ -5,6 +5,7 @@ import { createEventsRouter } from "./routers/events-router.ts";
 import { createTusdRouter } from "./routers/tusd-router.ts";
 import { createUploadsRouter } from "./routers/uploads-router.ts";
 import path from "node:path";
+import compression from "compression";
 
 export async function createApp(config: Config, db: DB) {
   const app = express();
@@ -29,6 +30,7 @@ export async function createApp(config: Config, db: DB) {
     );
   }
 
+  app.use(compression());
   app.use(express.static("public"));
 
   app.use("/api/events", createEventsRouter(db));
@@ -47,7 +49,6 @@ export async function createApp(config: Config, db: DB) {
     });
 
     app.use(vite.middlewares);
-  } else {
   }
 
   app.get("/{*splat}", (req, res) => {
