@@ -6,18 +6,18 @@ import type { Config } from "./config.ts";
 export const events = pgTable("events", {
   id: uuid().primaryKey().defaultRandom(),
   name: text().notNull(),
-  paid: boolean("paid").notNull(),
+  paid: boolean().notNull(),
 });
 
 export const uploads = pgTable("uploads", {
   id: text().primaryKey(),
   metadata: jsonb().$type<{ filename: string; mimeType: string }>().notNull(),
-  eventId: uuid("event_id")
+  eventId: uuid()
     .references(() => events.id, { onDelete: "cascade" })
     .notNull(),
   fingerprint: text().notNull(),
   batchId: text().notNull(),
-  visible: boolean("visible").notNull(),
+  visible: boolean().notNull(),
 });
 
 export const uploadsRel = relations(uploads, ({ one }) => ({
