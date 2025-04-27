@@ -20,14 +20,14 @@
       "problemMatcher": []
     },
     {
-      "label": "Serve resources",
+      "label": "Serve assets",
       "type": "shell",
-      "command": "cd resources && pnpm vite dev",
+      "command": "cd assets && pnpm vite dev",
       "problemMatcher": []
     },
     {
       "label": "Run dev",
-      "dependsOn": ["Run pg", "Run tusd", "Run server", "Serve resources"],
+      "dependsOn": ["Run pg", "Run tusd", "Run server", "Serve assets"],
       "dependsOrder": "parallel",
       "problemMatcher": []
     },
