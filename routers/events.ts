@@ -61,7 +61,7 @@ export function createEventsRouter(deps: EventsDeps) {
     res.setHeader("Content-Type", "image/png");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${event.name}.png"`,
+      `attachment; filename="${event.name}.png"`
     );
 
     toFileStream(res, `http://localhost:5173/${eventID}`, {
@@ -92,7 +92,7 @@ export function createEventsRouter(deps: EventsDeps) {
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${event.name}.zip"`,
+      `attachment; filename="${event.name}.zip"`
     );
 
     const zip = new ZipStream();
@@ -119,8 +119,8 @@ export function createEventsRouter(deps: EventsDeps) {
               reject(err);
             }
             resolve();
-          },
-        ),
+          }
+        )
       );
     }
 
