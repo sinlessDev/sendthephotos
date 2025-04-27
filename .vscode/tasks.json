@@ -2,51 +2,51 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Run PG",
+      "type": "shell",
+      "command": "pnpm dev:pg",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run App",
+      "type": "shell",
+      "command": "pnpm dev:app",
+      "problemMatcher": []
+    },
+    {
       "label": "Run tusd",
       "type": "shell",
       "command": "pnpm dev:tusd",
       "problemMatcher": []
     },
     {
-      "label": "Run pg",
-      "type": "shell",
-      "command": "pnpm dev:pg",
-      "problemMatcher": []
-    },
-    {
-      "label": "Run server",
-      "type": "shell",
-      "command": "pnpm dev",
-      "problemMatcher": []
-    },
-    {
-      "label": "Serve assets",
+      "label": "Serve Assets",
       "type": "shell",
       "command": "cd assets && pnpm vite dev",
       "problemMatcher": []
     },
     {
-      "label": "Run dev",
-      "dependsOn": ["Run pg", "Run tusd", "Run server", "Serve assets"],
+      "label": "Run Dev",
+      "dependsOn": ["Run pg", "Run tusd", "Run app", "Serve assets"],
       "dependsOrder": "parallel",
       "problemMatcher": []
     },
     {
-      "label": "Push db",
+      "label": "Push DB schema",
       "type": "shell",
-      "command": "pnpm drizzle-kit push",
+      "command": "pnpm db:push",
       "problemMatcher": [],
       "presentation": {
         "focus": true
       }
     },
     {
-      "label": "Run drizzle studio",
+      "label": "Run Drizzle Studio",
       "type": "shell",
-      "command": "pnpm drizzle-kit studio",
+      "command": "pnpm db:studio",
       "problemMatcher": [],
       "presentation": {
-        "focus": true
+        "reveal": "silent"
       }
     }
   ]
