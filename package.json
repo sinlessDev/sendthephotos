@@ -1,9 +1,9 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "dotenvx run -- node --import @swc-node/register/esm-register --watch ./main.ts",
     "dev:pg": "docker run --rm --name stp-pg -e POSTGRES_USER=stp -e POSTGRES_PASSWORD=stp -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 postgres:17.4-alpine",
-    "dev:tusd": "docker run --rm --name stp-tusd -p 8080:8080 tusproject/tusd:latest -behind-proxy -hooks-http http://host.docker.internal:3030/tusd-hook"
+    "dev:app": "dotenvx run -- NODE_ENV=production HOST=0.0.0.0 PORT=3030 ENABLE_HTTP_REQUEST_LOGGING=true FORCE_SHUTDOWN_TIMEOUT_SEC=10 DATABASE_URL=postgresql://stp:stp@localhost:5432/stp node --import @swc-node/register/esm-register --watch ./main.ts",
+    "dev:tusd": "docker run --rm --name stp-tusd -p 8080:8080 tusproject/tusd:v2.8 -behind-proxy -hooks-http http://host.docker.internal:3030/tusd-hook"
   },
   "dependencies": {
     "drizzle-orm": "^0.42.0",

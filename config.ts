@@ -14,14 +14,14 @@ const envSchema = v.object({
   PORT: v.pipe(v.string(), v.transform(parseInt)),
   ENABLE_HTTP_REQUEST_LOGGING: v.pipe(
     v.union([v.literal("true"), v.literal("false")]),
-    v.transform((input) => input === "true")
+    v.transform((input) => input === "true"),
   ),
   FORCE_SHUTDOWN_TIMEOUT_SEC: v.pipe(v.string(), v.transform(parseInt)),
   DATABASE_URL: v.string(),
 });
 
 export function createConfigFromEnv(
-  env: Record<string, string | undefined> = process.env
+  env: Record<string, string | undefined> = process.env,
 ): Config {
   const safeEnv = v.parse(envSchema, env);
 

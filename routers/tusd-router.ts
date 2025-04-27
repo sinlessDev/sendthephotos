@@ -61,7 +61,7 @@ export function createTusdRouter(db: DB) {
     if (hookRequest.output.Type === "pre-create") {
       const eventPaid = await getEventPaid(
         db,
-        hookRequest.output.Event.Upload.MetaData.eventID
+        hookRequest.output.Event.Upload.MetaData.eventID,
       );
 
       if (eventPaid) {
@@ -71,7 +71,7 @@ export function createTusdRouter(db: DB) {
 
       const [count, batches] = await getUniqBatches(
         db,
-        hookRequest.output.Event.Upload.MetaData.eventID
+        hookRequest.output.Event.Upload.MetaData.eventID,
       );
 
       if (

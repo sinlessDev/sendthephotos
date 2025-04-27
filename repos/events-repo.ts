@@ -36,7 +36,7 @@ export async function mustFindEventByID(db: DB, eventID: string) {
 
   const totalUploadsCount = event.uploads.length;
   const videoUploadsCount = event.uploads.filter((upload) =>
-    upload.metadata.mimeType.startsWith("video/")
+    upload.metadata.mimeType.startsWith("video/"),
   ).length;
   const photoUploadsCount = totalUploadsCount - videoUploadsCount;
 
@@ -79,7 +79,7 @@ export async function findAllEvents(db: DB) {
   return events.map((event) => {
     const totalUploadsCount = event.uploads.length;
     const videoUploadsCount = event.uploads.filter((upload) =>
-      upload.metadata.mimeType.startsWith("video/")
+      upload.metadata.mimeType.startsWith("video/"),
     ).length;
     const photoUploadsCount = totalUploadsCount - videoUploadsCount;
 
@@ -100,7 +100,7 @@ export async function findAllEvents(db: DB) {
 export async function getEventForGuest(
   db: DB,
   eventID: string,
-  fingerprint: string
+  fingerprint: string,
 ) {
   const event = await db.query.events.findFirst({
     where: eq(events.id, eventID),
