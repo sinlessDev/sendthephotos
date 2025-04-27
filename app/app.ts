@@ -20,19 +20,19 @@ export async function createApp(config: Config, db: DB) {
         skip(req) {
           if (config.serveAssets) {
             return !["/api", "/tusd"].some((path) =>
-              req.originalUrl.startsWith(path)
+              req.originalUrl.startsWith(path),
             );
           }
 
           return false;
         },
-      })
+      }),
     );
   }
 
   app.use(compression());
   app.use(
-    express.static(path.join(import.meta.dirname, "..", "assets", "dist"))
+    express.static(path.join(import.meta.dirname, "..", "assets", "dist")),
   );
 
   app.use("/api/events", createEventsRouter(db));
@@ -55,7 +55,7 @@ export async function createApp(config: Config, db: DB) {
 
   app.get("/{*splat}", (req, res) => {
     res.sendFile(
-      path.join(import.meta.dirname, "..", "assets", "dist", "index.html")
+      path.join(import.meta.dirname, "..", "assets", "dist", "index.html"),
     );
   });
 
