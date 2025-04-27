@@ -2,9 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Route, Switch } from "wouter";
-import { EventsRoute } from "./events/events-route.tsx";
-import { GalleryRoute, GuestRoute } from "./guest/guest-route.tsx";
-import "./main.css";
+import { EventsRoute } from "./routes/events/events-route.tsx";
+import { GalleryRoute, GuestRoute } from "./routes/guest/guest-route.tsx";
 
 const rootEl = document.getElementById("root");
 
@@ -31,5 +30,5 @@ createRoot(rootEl).render(
         </Route>
       </Switch>
     </QueryClientProvider>
-  </StrictMode>,
+  </StrictMode>
 );
