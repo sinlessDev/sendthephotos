@@ -27,7 +27,7 @@
     },
     {
       "label": "Run Dev",
-      "dependsOn": ["Run pg", "Run tusd", "Run app", "Serve assets"],
+      "dependsOn": ["Run PG", "Run tusd", "Run App", "Serve Assets"],
       "dependsOrder": "parallel",
       "problemMatcher": []
     },
