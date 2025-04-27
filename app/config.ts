@@ -10,10 +10,14 @@ export type Config = {
 };
 
 const envSchema = v.object({
-  NODE_ENV: v.union([v.literal("development"), v.literal("production")]),
-  HOST: v.string(),
-  PORT: v.pipe(v.string(), v.transform(parseInt)),
-  FORCE_SHUTDOWN_TIMEOUT_SEC: v.pipe(v.string(), v.transform(parseInt)),
+  NODE_ENV: v.optional(
+    v.union([v.literal("development"), v.literal("production")])
+  ),
+  HOST: v.optional(v.string()),
+  PORT: v.optional(v.pipe(v.string(), v.transform(parseInt), v.number())),
+  FORCE_SHUTDOWN_TIMEOUT_SEC: v.optional(
+    v.pipe(v.string(), v.transform(parseInt), v.number())
+  ),
   DATABASE_URL: v.string(),
 });
 
@@ -21,13 +25,14 @@ export function createConfigFromEnv(
   env: Record<string, string | undefined> = process.env
 ): Config {
   const safeEnv = v.parse(envSchema, env);
+  const nodeEnv = safeEnv.NODE_ENV ?? "development";
 
   return Object.freeze({
-    dev: safeEnv.NODE_ENV === "development",
-    prod: safeEnv.NODE_ENV === "production",
-    host: safeEnv.HOST,
-    port: safeEnv.PORT,
-    forceShutdownTimeoutSec: safeEnv.FORCE_SHUTDOWN_TIMEOUT_SEC,
+    dev: nodeEnv === "development",
+    prod: nodeEnv === "production",
+    host: safeEnv.HOST ?? "0.0.0.0",
+    port: safeEnv.PORT ?? 3000,
+    forceShutdownTimeoutSec: safeEnv.FORCE_SHUTDOWN_TIMEOUT_SEC ?? 10,
     databaseURL: safeEnv.DATABASE_URL,
   });
 }
