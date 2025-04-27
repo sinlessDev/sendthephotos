@@ -4,6 +4,7 @@ import type { DB } from "./db.ts";
 import { createEventsRouter } from "./routers/events-router.ts";
 import { createTusdRouter } from "./routers/tusd-router.ts";
 import { createUploadsRouter } from "./routers/uploads-router.ts";
+import path from "node:path";
 
 export async function createApp(config: Config, db: DB) {
   const app = express();
@@ -18,15 +19,17 @@ export async function createApp(config: Config, db: DB) {
         skip(req) {
           if (config.serveAssets) {
             return !["/api", "/tusd"].some((path) =>
-              req.originalUrl.startsWith(path),
+              req.originalUrl.startsWith(path)
             );
           }
 
           return false;
         },
-      }),
+      })
     );
   }
+
+  app.use(express.static("public"));
 
   app.use("/api/events", createEventsRouter(db));
   app.use("/api/uploads", createUploadsRouter(db));
@@ -40,10 +43,16 @@ export async function createApp(config: Config, db: DB) {
       server: {
         middlewareMode: true,
       },
+      publicDir: false,
     });
 
     app.use(vite.middlewares);
+  } else {
   }
+
+  app.get("/{*splat}", (req, res) => {
+    res.sendFile(path.join(import.meta.dirname, "../public", "index.html"));
+  });
 
   return app;
 }
