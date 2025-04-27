@@ -31,7 +31,9 @@ export async function createApp(config: Config, db: DB) {
   }
 
   app.use(compression());
-  app.use(express.static("public"));
+  app.use(
+    express.static(path.join(import.meta.dirname, "..", "assets", "dist"))
+  );
 
   app.use("/api/events", createEventsRouter(db));
   app.use("/api/uploads", createUploadsRouter(db));
@@ -52,7 +54,9 @@ export async function createApp(config: Config, db: DB) {
   }
 
   app.get("/{*splat}", (req, res) => {
-    res.sendFile(path.join(import.meta.dirname, "../public", "index.html"));
+    res.sendFile(
+      path.join(import.meta.dirname, "..", "assets", "dist", "index.html")
+    );
   });
 
   return app;
