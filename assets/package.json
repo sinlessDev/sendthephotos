@@ -1,4 +1,6 @@
 {
+  "name": "@stp/assets",
+  "private": true,
   "type": "module",
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^4.6.2",
