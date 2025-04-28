@@ -32,6 +32,12 @@ export async function createApp(config: Config, db: DB) {
       target: `${config.tusdBaseURL}/files`,
     })
   );
+  app.use(
+    "/electric",
+    createProxyMiddleware({
+      target: `${config.electricBaseURL}`,
+    })
+  );
 
   app.use(compression());
 

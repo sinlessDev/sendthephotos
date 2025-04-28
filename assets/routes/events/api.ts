@@ -1,3 +1,5 @@
+import { useShape } from "@electric-sql/react";
+
 type CreateEventResponse = {
   event: {
     id: string;
@@ -9,7 +11,7 @@ type CreateEventArgs = {
 };
 
 export async function createEvent(
-  args: CreateEventArgs,
+  args: CreateEventArgs
 ): Promise<CreateEventResponse> {
   const response = await fetch("/api/events", {
     method: "POST",
@@ -26,60 +28,104 @@ export async function createEvent(
   return response.json();
 }
 
-type GetEventsResponse = {
-  events: {
-    id: string;
-    name: string;
-    stats: {
-      totalUploadsCount: number;
-      videoUploadsCount: number;
-      photoUploadsCount: number;
-    };
-    lastUpload: {
-      id: string;
-      metadata: {
-        filename: string;
-        mimeType: string;
-      };
-    } | null;
-  }[];
+type Event = {
+  id: string;
+  name: string;
 };
 
-export async function getAllEvents(): Promise<GetEventsResponse> {
-  const response = await fetch("/api/events");
+type Upload = {
+  id: string;
+  metadata: {
+    filename: string;
+    mimeType: string;
+  };
+  event_id: string;
+};
 
-  if (!response.ok) {
-    throw new Error("Failed to get events");
-  }
+export function useAllEventsShape() {
+  const events = useShape<Event>({
+    url: `${window.location.origin}/electric/v1/shape`,
+    params: {
+      table: "events",
+      columns: ["id", "name"],
+    },
+  });
 
-  return response.json();
+  const uploads = useShape<Upload>({
+    url: `${window.location.origin}/electric/v1/shape`,
+    params: {
+      table: "uploads",
+      columns: ["id", "metadata", "event_id"],
+    },
+  });
+
+  return events.data.map((event) => ({
+    ...event,
+    stats: {
+      totalUploadsCount: uploads.data.filter(
+        (upload) => upload.event_id === event.id
+      ).length,
+      videoUploadsCount: uploads.data.filter(
+        (upload) =>
+          upload.event_id === event.id &&
+          upload.metadata.mimeType.startsWith("video/")
+      ).length,
+      photoUploadsCount: uploads.data.filter(
+        (upload) =>
+          upload.event_id === event.id &&
+          upload.metadata.mimeType.startsWith("image/")
+      ).length,
+    },
+    lastUpload:
+      uploads.data
+        .filter((upload) => upload.event_id === event.id)
+        .sort((a, b) => a.metadata.filename.localeCompare(b.metadata.filename))
+        .at(0) ?? null,
+  }));
 }
 
-type GetEventResponse = {
-  event: {
+export function useEventShape(eventID: string) {
+  const event = useShape<{
+    id: string;
     name: string;
     paid: boolean;
-    qrCodeURL: string;
-    uploads: {
-      id: string;
-      metadata: {
-        filename: string;
-        mimeType: string;
-      };
-      visible: boolean;
-    }[];
+  }>({
+    url: `${window.location.origin}/electric/v1/shape`,
+    params: {
+      table: "events",
+      columns: ["id", "name", "paid"],
+      where: "id = $1",
+      params: [eventID],
+    },
+  });
+
+  const uploads = useShape<{
+    id: string;
+    metadata: { filename: string; mimeType: string };
+    visible: boolean;
+  }>({
+    url: `${window.location.origin}/electric/v1/shape`,
+    params: {
+      table: "uploads",
+      columns: ["id", "metadata", "visible"],
+      where: "event_id = $1",
+      params: [eventID],
+    },
+  });
+
+  return {
+    ...event.data[0],
+    uploads: uploads.data,
     stats: {
-      totalUploadsCount: number;
-      videoUploadsCount: number;
-      photoUploadsCount: number;
-    };
+      totalUploadsCount: uploads.data.length,
+      videoUploadsCount: uploads.data.filter((upload) =>
+        upload.metadata.mimeType.startsWith("video/")
+      ).length,
+      photoUploadsCount: uploads.data.filter((upload) =>
+        upload.metadata.mimeType.startsWith("image/")
+      ).length,
+    },
   };
-};
-
-export async function getEvent(eventID: string): Promise<GetEventResponse> {
-  const response = await fetch(`/api/events/${eventID}`);
-
-  return response.json();
 }
 
 export async function toggleUploadVisibility(uploadID: string) {

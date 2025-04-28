@@ -1,16 +1,13 @@
 import { Router } from "express";
-import type { DB } from "../db.ts";
-import {
-  mustFindEventByID,
-  insertEvent,
-  findAllEvents,
-  findEventByID,
-  getEventForGuest,
-  deleteEvent,
-} from "../repos/events-repo.ts";
 import { toFileStream } from "qrcode";
 import ZipStream from "zip-stream";
 import type { Config } from "../config.ts";
+import type { DB } from "../db.ts";
+import {
+  deleteEvent,
+  insertEvent,
+  mustFindEventByID,
+} from "../repos/events-repo.ts";
 
 export function createEventsRouter(db: DB, config: Config) {
   const router = Router();
@@ -21,25 +18,6 @@ export function createEventsRouter(db: DB, config: Config) {
     const eventID = await insertEvent(db, { name, paid: false });
 
     res.json({ event: { id: eventID } });
-  });
-
-  router.get("/", async (req, res) => {
-    const events = await findAllEvents(db);
-
-    res.json({ events });
-  });
-
-  router.get("/:eventID", async (req, res) => {
-    const { eventID } = req.params;
-
-    const event = await findEventByID(db, eventID);
-
-    if (!event) {
-      res.status(404).json({ error: "Event not found" });
-      return;
-    }
-
-    res.json({ event });
   });
 
   router.delete("/:eventID", async (req, res) => {
@@ -109,19 +87,6 @@ export function createEventsRouter(db: DB, config: Config) {
     }
 
     zip.finalize();
-  });
-
-  router.get("/:eventID/:fingerprint", async (req, res) => {
-    const { eventID, fingerprint } = req.params;
-
-    const event = await getEventForGuest(db, eventID, fingerprint);
-
-    if (!event) {
-      res.status(404).json({ error: "Event not found" });
-      return;
-    }
-
-    res.json({ event });
   });
 
   return router;

@@ -1,4 +1,4 @@
-import * as v from "valibot";
+  import * as v from "valibot";
 
 export type Config = {
   dev: boolean;
@@ -8,6 +8,7 @@ export type Config = {
   tusdBaseURL: string;
   forceShutdownTimeoutSec: number;
   databaseURL: string;
+  electricBaseURL: string;
 };
 
 const envSchema = v.object({
@@ -21,6 +22,7 @@ const envSchema = v.object({
   ),
   DATABASE_URL: v.string(),
   TUSD_BASE_URL: v.string(),
+  ELECTRIC_BASE_URL: v.string(),
 });
 
 export function createConfigFromEnv(
@@ -37,5 +39,6 @@ export function createConfigFromEnv(
     forceShutdownTimeoutSec: safeEnv.FORCE_SHUTDOWN_TIMEOUT_SEC ?? 10,
     databaseURL: safeEnv.DATABASE_URL,
     tusdBaseURL: safeEnv.TUSD_BASE_URL,
+    electricBaseURL: safeEnv.ELECTRIC_BASE_URL,
   });
 }

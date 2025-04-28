@@ -1,23 +1,22 @@
+import { valibotResolver } from "@hookform/resolvers/valibot";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { valibotResolver } from "@hookform/resolvers/valibot";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import * as v from "valibot";
 import { Link, Route, Switch, useLocation, useParams } from "wouter";
 import {
   createEvent,
   deleteEvent,
-  getAllEvents,
-  getEvent,
   toggleUploadVisibility,
+  useAllEventsShape,
+  useEventShape,
 } from "./api.ts";
-import * as v from "valibot";
 import {
   QrCodeDialog,
-  QrCodeDialogTrigger,
   QrCodeDialogContent,
+  QrCodeDialogTrigger,
 } from "./qr-code-dialog.tsx";
-import { useState } from "react";
 
 export function EventsRoute() {
   return (
@@ -49,18 +48,11 @@ function NewEventForm() {
     },
   });
 
-  const createEventMutation = useMutation({
-    mutationFn: createEvent,
-  });
-
   const [, navigate] = useLocation();
 
-  const onSubmit = (data: any) => {
-    createEventMutation.mutate(data, {
-      onSuccess: () => {
-        navigate("/");
-      },
-    });
+  const onSubmit = async (data: any) => {
+    await createEvent(data);
+    navigate("/");
   };
 
   return (
@@ -90,12 +82,9 @@ function NewEventForm() {
 }
 
 function EventsList() {
-  const eventsQuery = useQuery({
-    queryKey: ["events"],
-    queryFn: getAllEvents,
-  });
+  const events = useAllEventsShape();
 
-  const noEvents = !eventsQuery.data || eventsQuery.data.events.length === 0;
+  const noEvents = !events || events.length === 0;
 
   return (
     <div className="p-7 max-w-5xl mx-auto">
@@ -128,7 +117,7 @@ function EventsList() {
       ) : (
         <div className="mt-10">
           <ul className="grid grid-cols-4 gap-4">
-            {eventsQuery.data.events.map((event) => (
+            {events.map((event) => (
               <li
                 key={event.id}
                 className="px-4.5 py-6 rounded-lg bg-black aspect-square flex flex-col justify-end relative"
@@ -177,42 +166,13 @@ function EventsList() {
 function EventDetails() {
   const { eventID } = useParams<{ eventID: string }>();
 
-  const [uploads, setUploads] = useState<
-    {
-      id: string;
-      metadata: {
-        filename: string;
-        mimeType: string;
-      };
-      visible: boolean;
-    }[]
-  >([]);
-
-  const eventQuery = useQuery({
-    queryKey: ["event", eventID],
-    async queryFn() {
-      const event = await getEvent(eventID);
-      setUploads(event.event.uploads);
-      return event;
-    },
-  });
+  const event = useEventShape(eventID);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const [, navigate] = useLocation();
 
-  const deleteEventMutation = useMutation({
-    mutationFn: deleteEvent,
-    onSuccess() {
-      navigate("~/events");
-    },
-  });
-
-  const toggleUploadVisibilityMutation = useMutation({
-    mutationFn: toggleUploadVisibility,
-  });
-
-  const noEvent = !eventQuery.data;
+  const noEvent = !event;
 
   if (noEvent) {
     return (
@@ -222,41 +182,34 @@ function EventDetails() {
     );
   }
 
-  const toggleUploadVisible = (uploadID: string) => {
-    toggleUploadVisibilityMutation.mutate(uploadID);
-    setUploads((prev) =>
-      prev.map((upload) =>
-        upload.id === uploadID
-          ? { ...upload, visible: !upload.visible }
-          : upload
-      )
-    );
+  const toggleUploadVisible = async (uploadID: string) => {
+    await toggleUploadVisibility(uploadID);
   };
 
-  const noUploads = uploads.length === 0;
+  const noUploads = event.uploads.length === 0;
 
   let statsMessage: string;
 
-  if (eventQuery.data.event.stats.photoUploadsCount === 0) {
-    if (eventQuery.data.event.stats.videoUploadsCount === 1) {
+  if (event.stats.photoUploadsCount === 0) {
+    if (event.stats.videoUploadsCount === 1) {
       statsMessage = "1 video uploaded";
     } else {
-      statsMessage = `${eventQuery.data.event.stats.videoUploadsCount} videos uploaded`;
+      statsMessage = `${event.stats.videoUploadsCount} videos uploaded`;
     }
-  } else if (eventQuery.data.event.stats.videoUploadsCount === 0) {
-    if (eventQuery.data.event.stats.photoUploadsCount === 1) {
+  } else if (event.stats.videoUploadsCount === 0) {
+    if (event.stats.photoUploadsCount === 1) {
       statsMessage = "1 photo uploaded";
     } else {
-      statsMessage = `${eventQuery.data.event.stats.photoUploadsCount} photos uploaded`;
+      statsMessage = `${event.stats.photoUploadsCount} photos uploaded`;
     }
   } else {
     if (
-      eventQuery.data.event.stats.photoUploadsCount === 1 &&
-      eventQuery.data.event.stats.videoUploadsCount === 1
+      event.stats.photoUploadsCount === 1 &&
+      event.stats.videoUploadsCount === 1
     ) {
       statsMessage = "1 photo and 1 video uploaded";
     } else {
-      statsMessage = `${eventQuery.data.event.stats.photoUploadsCount} photos and ${eventQuery.data.event.stats.videoUploadsCount} videos uploaded`;
+      statsMessage = `${event.stats.photoUploadsCount} photos and ${event.stats.videoUploadsCount} videos uploaded`;
     }
   }
 
@@ -284,9 +237,10 @@ function EventDetails() {
               </AlertDialog.Cancel>
               <AlertDialog.Action asChild>
                 <button
-                  onClick={() => {
-                    deleteEventMutation.mutate(eventID);
+                  onClick={async () => {
+                    await deleteEvent(eventID);
                     setDeleteDialogOpen(false);
+                    navigate("/");
                   }}
                   className="rounded-md bg-red-500 h-11 px-2.5 font-medium leading-none text-white active:bg-red-600 select-none"
                 >
@@ -297,7 +251,7 @@ function EventDetails() {
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog.Root>
-      {!eventQuery.data.event.paid && (
+      {!event.paid && (
         <div className="bg-striped bg-striped-from-amber-200 bg-striped-to-amber-100 border-b border-b-black/10 shadow-xs">
           <p className="max-w-5xl mx-auto px-7 py-4 text-base font-semibold text-amber-700 text-center">
             Event is in trial mode.{" "}
@@ -319,7 +273,7 @@ function EventDetails() {
           Back
         </Link>
         <div className="mt-2 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">{eventQuery.data.event.name}</h1>
+          <h1 className="text-3xl font-bold">{event.name}</h1>
           <div className="flex items-center gap-2">
             <QrCodeDialog>
               <QrCodeDialogTrigger asChild>
@@ -375,11 +329,12 @@ function EventDetails() {
                   sideOffset={8}
                 >
                   <DropdownMenu.Item
-                    onSelect={() => {
-                      if (eventQuery.data.event.stats.totalUploadsCount > 0) {
+                    onSelect={async () => {
+                      if (event.stats.totalUploadsCount > 0) {
                         setDeleteDialogOpen(true);
                       } else {
-                        deleteEventMutation.mutate(eventID);
+                        await deleteEvent(eventID);
+                        navigate("/");
                       }
                     }}
                     className="w-full text-white font-semibold text-base active:bg-red-600 bg-red-500 active:text-white rounded-sm p-2 flex items-center gap-x-1.5 select-none"
@@ -401,7 +356,7 @@ function EventDetails() {
             </DropdownMenu.Root>
           </div>
         </div>
-        {eventQuery.data.event.stats.totalUploadsCount > 0 && (
+        {event.stats.totalUploadsCount > 0 && (
           <div className="mt-2">
             <p className="text-lg font-medium">{statsMessage}</p>
           </div>
@@ -422,7 +377,7 @@ function EventDetails() {
         ) : (
           <>
             <div className="mt-10 grid grid-cols-3 gap-x-7 gap-y-10">
-              {uploads.map((upload) => (
+              {event.uploads.map((upload) => (
                 <div key={upload.id} className="flex items-center">
                   <div className="relative">
                     <Link href={`~/events/${eventID}/gallery/${upload.id}`}>

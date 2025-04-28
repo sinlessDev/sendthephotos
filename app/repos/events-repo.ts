@@ -36,7 +36,7 @@ export async function mustFindEventByID(db: DB, eventID: string) {
 
   const totalUploadsCount = event.uploads.length;
   const videoUploadsCount = event.uploads.filter((upload) =>
-    upload.metadata.mimeType.startsWith("video/"),
+    upload.metadata.mimeType.startsWith("video/")
   ).length;
   const photoUploadsCount = totalUploadsCount - videoUploadsCount;
 
@@ -51,14 +51,6 @@ export async function mustFindEventByID(db: DB, eventID: string) {
   };
 }
 
-export async function findEventByID(db: DB, eventID: string) {
-  try {
-    return await mustFindEventByID(db, eventID);
-  } catch (error) {
-    return null;
-  }
-}
-
 type NewEvent = typeof events.$inferInsert;
 
 export async function insertEvent(db: DB, event: NewEvent) {
@@ -67,89 +59,6 @@ export async function insertEvent(db: DB, event: NewEvent) {
   });
 
   return insertedEvent.id;
-}
-
-export async function findAllEvents(db: DB) {
-  const events = await db.query.events.findMany({
-    with: {
-      uploads: true,
-    },
-  });
-
-  return events.map((event) => {
-    const totalUploadsCount = event.uploads.length;
-    const videoUploadsCount = event.uploads.filter((upload) =>
-      upload.metadata.mimeType.startsWith("video/"),
-    ).length;
-    const photoUploadsCount = totalUploadsCount - videoUploadsCount;
-
-    const lastUpload = event.uploads.at(-1);
-
-    return {
-      ...event,
-      stats: {
-        totalUploadsCount,
-        videoUploadsCount,
-        photoUploadsCount,
-      },
-      lastUpload: lastUpload ?? null,
-    };
-  });
-}
-
-export async function getEventForGuest(
-  db: DB,
-  eventID: string,
-  fingerprint: string,
-) {
-  const event = await db.query.events.findFirst({
-    where: eq(events.id, eventID),
-    columns: {
-      name: true,
-      paid: true,
-    },
-    with: {
-      uploads: {
-        where: eq(uploads.visible, true),
-        columns: {
-          id: true,
-          metadata: true,
-          fingerprint: true,
-        },
-      },
-    },
-  });
-
-  if (!event) {
-    return null;
-  }
-
-  const markedUploads = event.uploads
-    .map((upload) => {
-      return {
-        id: upload.id,
-        metadata: upload.metadata,
-        deletable: upload.fingerprint === fingerprint,
-      };
-    })
-    .toSorted((a, b) => (b.deletable ? 1 : 0) - (a.deletable ? 1 : 0));
-
-  let uploadAvailable: boolean;
-
-  const [count] = await getUniqBatches(db, eventID);
-
-  if (event.paid) {
-    uploadAvailable = true;
-  } else {
-    uploadAvailable = count < 1;
-  }
-
-  return {
-    name: event.name,
-    paid: event.paid,
-    uploads: markedUploads,
-    uploadAvailable,
-  };
 }
 
 export async function getUniqBatches(db: DB, eventID: string) {

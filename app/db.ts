@@ -12,11 +12,11 @@ export const events = pgTable("events", {
 export const uploads = pgTable("uploads", {
   id: text().primaryKey(),
   metadata: jsonb().$type<{ filename: string; mimeType: string }>().notNull(),
-  eventId: uuid()
+  eventId: uuid("event_id")
     .references(() => events.id, { onDelete: "cascade" })
     .notNull(),
   fingerprint: text().notNull(),
-  batchId: text().notNull(),
+  batchId: text("batch_id").notNull(),
   visible: boolean().notNull(),
 });
 

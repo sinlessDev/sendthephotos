@@ -1,9 +1,8 @@
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLayoutEffect } from "react";
 import * as tus from "tus-js-client";
 import { Link, useParams, useRoute } from "wouter";
-import { deleteUpload, getEventForGuest, getUpload } from "./api.ts";
+import { deleteUpload, useEventGuestShape, useUploadShape } from "./api.ts";
 
 const fingerprint = await FingerprintJS.load()
   .then((fp) => fp.get())
@@ -12,21 +11,9 @@ const fingerprint = await FingerprintJS.load()
 export function GuestRoute() {
   const { eventID } = useParams<{ eventID: string }>();
 
-  const queryClient = useQueryClient();
+  const event = useEventGuestShape(eventID, fingerprint);
 
-  const eventQuery = useQuery({
-    queryKey: ["event", eventID],
-    queryFn: () => getEventForGuest(eventID, fingerprint),
-  });
-
-  const deleteUploadMutation = useMutation({
-    mutationFn: (uploadID: string) => deleteUpload(uploadID),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["event", eventID] });
-    },
-  });
-
-  const noEvent = !eventQuery.data;
+  const noEvent = typeof event === "undefined" || event === null;
 
   if (noEvent) {
     return (
@@ -53,9 +40,6 @@ export function GuestRoute() {
           fingerprint,
           batchID,
         },
-        onSuccess() {
-          queryClient.invalidateQueries({ queryKey: ["event", eventID] });
-        },
       });
 
       upload.findPreviousUploads().then((previousUploads) => {
@@ -76,11 +60,11 @@ export function GuestRoute() {
     }
   };
 
-  const noUploads = eventQuery.data.event.uploads.length === 0;
+  const noUploads = event.uploads.length === 0;
 
   return (
     <div>
-      {!eventQuery.data.event.paid && (
+      {!event.paid && (
         <div className="bg-striped bg-striped-from-amber-200 bg-striped-to-amber-100 border-b border-b-black/10 shadow-xs">
           <p className="max-w-5xl mx-auto px-7 py-4 text-base font-semibold text-amber-700 text-center">
             Event is in trial mode. If you're the host,{" "}
@@ -95,9 +79,9 @@ export function GuestRoute() {
         </div>
       )}
       <div className="p-7 max-w-5xl mx-auto">
-        <title>{`${eventQuery.data.event.name} - SendThePhotos`}</title>
+        <title>{`${event.name} - SendThePhotos`}</title>
         <div className="flex items-center gap-2 justify-between">
-          <h1 className="text-3xl font-bold">{eventQuery.data.event.name}</h1>
+          <h1 className="text-3xl font-bold">{event.name}</h1>
           <input
             type="file"
             name="uploads"
@@ -109,7 +93,7 @@ export function GuestRoute() {
           />
           <label
             htmlFor="uploads"
-            aria-disabled={!eventQuery.data.event.uploadAvailable}
+            aria-disabled={!event.uploadAvailable}
             className="bg-green-700 text-white active:bg-green-800 px-2.5 h-12 flex items-center justify-center max-w-fit rounded-md font-semibold aria-disabled:bg-stone-200 aria-disabled:text-stone-400"
           >
             Upload files
@@ -124,7 +108,7 @@ export function GuestRoute() {
           </div>
         ) : (
           <div className="mt-10 grid grid-cols-3 gap-x-7 gap-y-10">
-            {eventQuery.data.event.uploads.map((upload) => (
+            {event.uploads.map((upload) => (
               <div key={upload.id} className="flex items-center">
                 <div className="relative">
                   <Link href={`~/${eventID}/gallery/${upload.id}`}>
@@ -146,7 +130,9 @@ export function GuestRoute() {
                   </Link>
                   {upload.deletable && (
                     <button
-                      onClick={() => deleteUploadMutation.mutate(upload.id)}
+                      onClick={async () => {
+                        await deleteUpload(upload.id);
+                      }}
                       className="absolute -top-3 -right-3 bg-red-600 rounded-full text-white size-11 flex items-center justify-center active:bg-red-700"
                     >
                       <span
@@ -195,38 +181,28 @@ export function GalleryRoute() {
     };
   }, []);
 
-  const eventQuery = useQuery({
-    queryKey: ["event", eventID],
-    queryFn: () => getEventForGuest(eventID, fingerprint),
-  });
+  const event = useEventGuestShape(eventID, fingerprint);
 
-  const uploadQuery = useQuery({
-    queryKey: ["upload", uploadID],
-    queryFn: () => getUpload(uploadID),
-  });
+  const upload = useUploadShape(uploadID);
 
-  const noEvent = !eventQuery.data;
+  const noEvent = typeof event === "undefined" || event === null;
 
   if (noEvent) {
     return <div>No event found</div>;
   }
 
-  const uploadIDIndex = eventQuery.data.event.uploads.findIndex(
+  const uploadIDIndex = event.uploads.findIndex(
     (upload) => upload.id === uploadID
   );
 
-  const nextUpload = eventQuery.data.event.uploads.at(
-    uploadIDIndex + 1 > eventQuery.data.event.uploads.length - 1
-      ? 0
-      : uploadIDIndex + 1
+  const nextUpload = event.uploads.at(
+    uploadIDIndex + 1 > event.uploads.length - 1 ? 0 : uploadIDIndex + 1
   )?.id;
-  const previousUpload = eventQuery.data.event.uploads.at(
-    uploadIDIndex - 1 < 0
-      ? eventQuery.data.event.uploads.length - 1
-      : uploadIDIndex - 1
+  const previousUpload = event.uploads.at(
+    uploadIDIndex - 1 < 0 ? event.uploads.length - 1 : uploadIDIndex - 1
   )?.id;
 
-  const noUpload = !uploadQuery.data;
+  const noUpload = typeof upload === "undefined" || upload === null;
 
   if (noUpload) {
     return <div>Upload not found</div>;
@@ -249,7 +225,7 @@ export function GalleryRoute() {
         </span>
       </Link>
       <div className="max-w-lg h-full mx-auto w-full relative">
-        {uploadQuery.data.upload.metadata.mimeType.startsWith("image/") ? (
+        {upload.metadata.mimeType.startsWith("image/") ? (
           <img
             src={`/files/${uploadID}`}
             alt={uploadID}
@@ -262,7 +238,7 @@ export function GalleryRoute() {
             controls
           />
         )}
-        {previousUpload && eventQuery.data.event.uploads.length > 1 && (
+        {previousUpload && event.uploads.length > 1 && (
           <Link
             href={
               match
@@ -283,7 +259,7 @@ export function GalleryRoute() {
             </span>
           </Link>
         )}
-        {nextUpload && eventQuery.data.event.uploads.length > 1 && (
+        {nextUpload && event.uploads.length > 1 && (
           <Link
             href={
               match
