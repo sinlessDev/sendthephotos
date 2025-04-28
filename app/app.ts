@@ -53,12 +53,19 @@ export async function createApp(config: Config, db: DB) {
     app.use(
       "/assets",
       express.static(
-        path.join(import.meta.dirname, "..", "assets", "dist", "assets")
+        path.join(import.meta.dirname, "..", "..", "assets", "dist", "assets")
       )
     );
     app.get("/{*splat}", (req, res) => {
       res.sendFile(
-        path.join(import.meta.dirname, "..", "assets", "dist", "index.html")
+        path.join(
+          import.meta.dirname,
+          "..",
+          "..",
+          "assets",
+          "dist",
+          "index.html"
+        )
       );
     });
   }
