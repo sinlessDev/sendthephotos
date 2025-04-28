@@ -57,7 +57,7 @@ export function createEventsRouter(db: DB) {
     res.setHeader("Content-Type", "image/png");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${event.name}.png"`,
+      `attachment; filename="${event.name}.png"`
     );
 
     toFileStream(res, `http://localhost:5173/${eventID}`, {
@@ -65,19 +65,6 @@ export function createEventsRouter(db: DB) {
       margin: 0,
       errorCorrectionLevel: "high",
     });
-  });
-
-  router.get("/:eventID/:fingerprint", async (req, res) => {
-    const { eventID, fingerprint } = req.params;
-
-    const event = await getEventForGuest(db, eventID, fingerprint);
-
-    if (!event) {
-      res.status(404).json({ error: "Event not found" });
-      return;
-    }
-
-    res.json({ event });
   });
 
   router.get("/:eventID/zip", async (req, res) => {
@@ -88,7 +75,7 @@ export function createEventsRouter(db: DB) {
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${event.name}.zip"`,
+      `attachment; filename="${event.name}.zip"`
     );
 
     const zip = new ZipStream();
@@ -115,12 +102,25 @@ export function createEventsRouter(db: DB) {
               reject(err);
             }
             resolve();
-          },
-        ),
+          }
+        )
       );
     }
 
     zip.finalize();
+  });
+
+  router.get("/:eventID/:fingerprint", async (req, res) => {
+    const { eventID, fingerprint } = req.params;
+
+    const event = await getEventForGuest(db, eventID, fingerprint);
+
+    if (!event) {
+      res.status(404).json({ error: "Event not found" });
+      return;
+    }
+
+    res.json({ event });
   });
 
   return router;
