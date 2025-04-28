@@ -9,13 +9,13 @@ import compression from "compression";
 import morgan from "morgan";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
-function createAPIRouter(db: DB) {
+function createAPIRouter(db: DB, config: Config) {
   const router = Router();
 
   router.use(express.json());
   router.use(morgan("tiny"));
 
-  router.use("/events", createEventsRouter(db));
+  router.use("/events", createEventsRouter(db, config));
   router.use("/uploads", createUploadsRouter(db));
   router.use("/tusd", createTusdRouter(db));
 
@@ -25,7 +25,7 @@ function createAPIRouter(db: DB) {
 export async function createApp(config: Config, db: DB) {
   const app = express();
 
-  app.use("/api", createAPIRouter(db));
+  app.use("/api", createAPIRouter(db, config));
   app.use(
     "/files",
     createProxyMiddleware({

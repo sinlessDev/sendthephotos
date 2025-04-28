@@ -10,8 +10,9 @@ import {
 } from "../repos/events-repo.ts";
 import { toFileStream } from "qrcode";
 import ZipStream from "zip-stream";
+import type { Config } from "../config.ts";
 
-export function createEventsRouter(db: DB) {
+export function createEventsRouter(db: DB, config: Config) {
   const router = Router();
 
   router.post("/", async (req, res) => {
@@ -83,7 +84,7 @@ export function createEventsRouter(db: DB) {
     zip.pipe(res);
 
     for (const upload of event.uploads) {
-      const response = await fetch(`http://localhost:8080/files/${upload.id}`);
+      const response = await fetch(`${config.tusdBaseURL}/files/${upload.id}`);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch file ${upload.id}`);
