@@ -7,6 +7,8 @@ import { createUploadsRouter } from "./routers/uploads-router.ts";
 import path from "node:path";
 import compression from "compression";
 import morgan from "morgan";
+import httpProxy from "http-proxy";
+import { createProxyMiddleware } from "http-proxy-middleware";
 
 function createAPIRouter(db: DB) {
   const router = Router();
@@ -25,6 +27,12 @@ export async function createApp(config: Config, db: DB) {
   const app = express();
 
   app.use("/api", createAPIRouter(db));
+  app.use(
+    "/files",
+    createProxyMiddleware({
+      target: "http://localhost:8080/files",
+    })
+  );
 
   app.use(compression());
 
