@@ -30,7 +30,7 @@ export async function createApp(config: Config, db: DB) {
   app.use(
     "/files",
     createProxyMiddleware({
-      target: "http://localhost:8080/files",
+      target: `${config.tusdBaseURL}/files`,
     })
   );
 

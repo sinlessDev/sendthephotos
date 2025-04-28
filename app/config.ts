@@ -5,6 +5,7 @@ export type Config = {
   prod: boolean;
   host: string;
   port: number;
+  tusdBaseURL: string;
   forceShutdownTimeoutSec: number;
   databaseURL: string;
 };
@@ -19,6 +20,7 @@ const envSchema = v.object({
     v.pipe(v.string(), v.transform(parseInt), v.number())
   ),
   DATABASE_URL: v.string(),
+  TUSD_BASE_URL: v.string(),
 });
 
 export function createConfigFromEnv(
@@ -34,5 +36,6 @@ export function createConfigFromEnv(
     port: safeEnv.PORT ?? 3000,
     forceShutdownTimeoutSec: safeEnv.FORCE_SHUTDOWN_TIMEOUT_SEC ?? 10,
     databaseURL: safeEnv.DATABASE_URL,
+    tusdBaseURL: safeEnv.TUSD_BASE_URL,
   });
 }
