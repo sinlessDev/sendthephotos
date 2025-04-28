@@ -131,7 +131,7 @@ function EventsList() {
             {eventsQuery.data.events.map((event) => (
               <li
                 key={event.id}
-                className="px-4.5 py-6 rounded-lg bg-black size-64 flex flex-col justify-end relative"
+                className="px-4.5 py-6 rounded-lg bg-black aspect-square flex flex-col justify-end relative"
               >
                 {event.lastUpload &&
                   event.lastUpload.metadata.mimeType.startsWith("image/") && (
@@ -228,8 +228,8 @@ function EventDetails() {
       prev.map((upload) =>
         upload.id === uploadID
           ? { ...upload, visible: !upload.visible }
-          : upload,
-      ),
+          : upload
+      )
     );
   };
 

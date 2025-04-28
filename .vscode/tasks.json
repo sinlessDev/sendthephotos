@@ -20,8 +20,14 @@
       "problemMatcher": []
     },
     {
+      "label": "Run Electric",
+      "type": "shell",
+      "command": "pnpm dev:electric",
+      "problemMatcher": []
+    },
+    {
       "label": "Run Dev",
-      "dependsOn": ["Run PG", "Run tusd", "Run App"],
+      "dependsOn": ["Run PG", "Run tusd", "Run App", "Run Electric"],
       "dependsOrder": "parallel",
       "problemMatcher": []
     },
