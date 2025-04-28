@@ -7,7 +7,6 @@ import { createUploadsRouter } from "./routers/uploads-router.ts";
 import path from "node:path";
 import compression from "compression";
 import morgan from "morgan";
-import httpProxy from "http-proxy";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
 function createAPIRouter(db: DB) {
