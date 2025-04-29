@@ -5,7 +5,6 @@ import { createEventsRouter } from "./routers/events-router.ts";
 import { createTusdRouter } from "./routers/tusd-router.ts";
 import { createUploadsRouter } from "./routers/uploads-router.ts";
 import path from "node:path";
-import compression from "compression";
 import morgan from "morgan";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
@@ -30,16 +29,14 @@ export async function createApp(config: Config, db: DB) {
     "/tusd",
     createProxyMiddleware({
       target: `${config.tusdBaseURL}`,
-    }),
+    })
   );
   app.use(
     "/electric",
     createProxyMiddleware({
       target: `${config.electricBaseURL}`,
-    }),
+    })
   );
-
-  app.use(compression());
 
   if (config.dev) {
     const { createServer } = await import("vite");
@@ -59,8 +56,8 @@ export async function createApp(config: Config, db: DB) {
     app.use(
       "/assets",
       express.static(
-        path.join(import.meta.dirname, "..", "..", "assets", "dist", "assets"),
-      ),
+        path.join(import.meta.dirname, "..", "..", "assets", "dist", "assets")
+      )
     );
     app.get("/{*splat}", (req, res) => {
       res.sendFile(
@@ -70,8 +67,8 @@ export async function createApp(config: Config, db: DB) {
           "..",
           "assets",
           "dist",
-          "index.html",
-        ),
+          "index.html"
+        )
       );
     });
   }
