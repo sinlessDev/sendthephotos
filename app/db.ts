@@ -1,7 +1,27 @@
 import { relations } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { boolean, jsonb, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  customType,
+  jsonb,
+  pgTable,
+  text,
+  uuid,
+} from "drizzle-orm/pg-core";
 import type { Config } from "./config.ts";
+
+const bytea = customType<{ data: Buffer }>({
+  dataType() {
+    return "bytea";
+  },
+});
+
+export const users = pgTable("users", (t) => ({
+  id: t.uuid().primaryKey(),
+  email: t.text().notNull().unique(),
+  salt: bytea().notNull(),
+  hashedPassword: bytea().notNull(),
+}));
 
 export const events = pgTable("events", {
   id: uuid().primaryKey().defaultRandom(),
@@ -38,6 +58,7 @@ export function createDB(config: Config) {
       uploads,
       eventsRel,
       uploadsRel,
+      users,
     },
   });
 

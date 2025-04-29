@@ -1,4 +1,4 @@
-  import * as v from "valibot";
+import * as v from "valibot";
 
 export type Config = {
   dev: boolean;
@@ -13,6 +13,7 @@ export type Config = {
   };
   databaseURL: string;
   electricBaseURL: string;
+  authSecret: string;
 };
 
 const envSchema = v.object({
@@ -29,6 +30,7 @@ const envSchema = v.object({
   ELECTRIC_BASE_URL: v.string(),
   TUSD_PORT: v.optional(v.pipe(v.string(), v.transform(parseInt), v.number())),
   TUSD_HOST: v.optional(v.string()),
+  AUTH_SECRET: v.string(),
 });
 
 export function createConfigFromEnv(
@@ -37,7 +39,7 @@ export function createConfigFromEnv(
   const safeEnv = v.parse(envSchema, env);
   const nodeEnv = safeEnv.NODE_ENV ?? "development";
 
-  return Object.freeze({
+  return {
     dev: nodeEnv === "development",
     prod: nodeEnv === "production",
     host: safeEnv.HOST ?? "0.0.0.0",
@@ -49,6 +51,7 @@ export function createConfigFromEnv(
     tusd: {
       port: safeEnv.TUSD_PORT ?? 3001,
       host: safeEnv.TUSD_HOST ?? "0.0.0.0",
-    }
-  });
+    },
+    authSecret: safeEnv.AUTH_SECRET,
+  };
 }
