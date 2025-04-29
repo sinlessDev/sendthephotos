@@ -9,7 +9,8 @@
     "dev:electric": "docker run --rm --name stp-electric -e DATABASE_URL=postgresql://stp:stp@host.docker.internal:5432/stp -e ELECTRIC_INSECURE=true -p 3030:3000 -t electricsql/electric:latest",
     "dev:tusd": "docker run --rm --name stp-tusd -p 8080:8080 tusproject/tusd:v2.8 -behind-proxy -hooks-http http://host.docker.internal:3001 -expose-metrics=false -hooks-enabled-events pre-create,post-create,post-terminate -base-path /tusd",
     "db:push": "DATABASE_URL=postgresql://stp:stp@localhost:5432/stp drizzle-kit push",
-    "db:studio": "DATABASE_URL=postgresql://stp:stp@localhost:5432/stp drizzle-kit studio"
+    "db:studio": "DATABASE_URL=postgresql://stp:stp@localhost:5432/stp drizzle-kit studio",
+    "fmt": "prettier --write ./**/*.{ts,tsx}"
   },
   "dependencies": {
     "compression": "^1.8.0",
@@ -31,11 +32,12 @@
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^22.15.2",
+    "@types/node": "^22.15.3",
     "@types/pg": "^8.11.14",
     "@types/qrcode": "^1.5.5",
     "@types/zip-stream": "^7.0.0",
     "drizzle-kit": "^0.31.0",
+    "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.3"
   }

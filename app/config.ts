@@ -18,12 +18,12 @@ export type Config = {
 
 const envSchema = v.object({
   NODE_ENV: v.optional(
-    v.union([v.literal("development"), v.literal("production")])
+    v.union([v.literal("development"), v.literal("production")]),
   ),
   HOST: v.optional(v.string()),
   PORT: v.optional(v.pipe(v.string(), v.transform(parseInt), v.number())),
   FORCE_SHUTDOWN_TIMEOUT_SEC: v.optional(
-    v.pipe(v.string(), v.transform(parseInt), v.number())
+    v.pipe(v.string(), v.transform(parseInt), v.number()),
   ),
   DATABASE_URL: v.string(),
   TUSD_BASE_URL: v.string(),
@@ -34,7 +34,7 @@ const envSchema = v.object({
 });
 
 export function createConfigFromEnv(
-  env: Record<string, string | undefined> = process.env
+  env: Record<string, string | undefined> = process.env,
 ): Config {
   const safeEnv = v.parse(envSchema, env);
   const nodeEnv = safeEnv.NODE_ENV ?? "development";
