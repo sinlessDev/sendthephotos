@@ -126,7 +126,7 @@ function EventsList() {
                   event.lastUpload.metadata.mimeType.startsWith("image/") && (
                     <div className="absolute inset-0">
                       <img
-                        src={`/files/${event.lastUpload.id}`}
+                        src={`/tusd/${event.lastUpload.id}`}
                         alt={event.lastUpload.metadata.filename}
                         className="w-full h-full object-cover object-center rounded-lg opacity-30"
                       />
@@ -136,7 +136,7 @@ function EventsList() {
                   event.lastUpload.metadata.mimeType.startsWith("video/") && (
                     <div className="absolute inset-0">
                       <video
-                        src={`/files/${event.lastUpload.id}`}
+                        src={`/tusd/${event.lastUpload.id}`}
                         className="w-full h-full object-cover object-center rounded-lg opacity-30"
                       />
                     </div>
@@ -383,14 +383,14 @@ function EventDetails() {
                     <Link href={`~/events/${eventID}/gallery/${upload.id}`}>
                       {upload.metadata.mimeType.startsWith("image/") ? (
                         <img
-                          src={`/files/${upload.id}`}
+                          src={`/tusd/${upload.id}`}
                           alt={upload.metadata.filename}
                           className="rounded-lg data-[visible=false]:opacity-50"
                           data-visible={upload.visible}
                         />
                       ) : (
                         <video
-                          src={`/files/${upload.id}`}
+                          src={`/tusd/${upload.id}`}
                           className="rounded-lg data-[visible=false]:opacity-50"
                           data-visible={upload.visible}
                           autoPlay

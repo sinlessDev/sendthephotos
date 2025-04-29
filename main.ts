@@ -1,11 +1,16 @@
 import { createApp } from "./app/app.ts";
 import { createConfigFromEnv } from "./app/config.ts";
 import { createDB } from "./app/db.ts";
+import { createTusd } from "./app/tusd/tusd.ts";
+
+const SHUTDOWN_TIMEOUT = 10_000 as const;
 
 const config = createConfigFromEnv();
 const db = createDB(config);
 
 const app = await createApp(config, db);
+
+const tusd = createTusd(db);
 
 const server = app.listen(config.port, config.host, (err) => {
   if (err) {
@@ -16,8 +21,27 @@ const server = app.listen(config.port, config.host, (err) => {
   console.info(`Server started at http://${config.host}:${config.port}`);
 });
 
+const tusdServer = tusd.listen(config.tusd.port, config.tusd.host, (err) => {
+  if (err) {
+    console.error("Failed to start tusd:", err);
+    process.exit(1);
+  }
+
+  console.info(
+    `Tusd started at http://${config.tusd.host}:${config.tusd.port}`
+  );
+});
+
 ["SIGINT", "SIGTERM"].forEach((signal) => {
   process.on(signal, () => {
+    tusdServer.close((err) => {
+      if (err) {
+        console.error("Failed to close tusd:", err);
+      } else {
+        console.info("Tusd closed");
+      }
+    });
+
     console.info("Shutdown initiated");
 
     server.close((err) => {
@@ -34,6 +58,6 @@ const server = app.listen(config.port, config.host, (err) => {
       console.warn("Forcing shutdown - terminating connections");
       server.closeAllConnections();
       process.exit(0);
-    }, config.forceShutdownTimeoutSec * 1000);
+    }, SHUTDOWN_TIMEOUT);
   });
 });

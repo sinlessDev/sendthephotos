@@ -62,7 +62,7 @@ export function createEventsRouter(db: DB, config: Config) {
     zip.pipe(res);
 
     for (const upload of event.uploads) {
-      const response = await fetch(`${config.tusdBaseURL}/files/${upload.id}`);
+      const response = await fetch(`${config.tusdBaseURL}/tusd/${upload.id}`);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch file ${upload.id}`);

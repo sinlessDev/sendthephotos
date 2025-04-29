@@ -27,9 +27,9 @@ export async function createApp(config: Config, db: DB) {
 
   app.use("/api", createAPIRouter(db, config));
   app.use(
-    "/files",
+    "/tusd",
     createProxyMiddleware({
-      target: `${config.tusdBaseURL}/files`,
+      target: `${config.tusdBaseURL}`,
     })
   );
   app.use(

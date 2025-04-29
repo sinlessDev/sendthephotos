@@ -1,7 +1,7 @@
 import { useShape } from "@electric-sql/react";
 
 export async function deleteUpload(uploadID: string) {
-  const res = await fetch(`/files/${uploadID}`, {
+  const res = await fetch(`/tusd/${uploadID}`, {
     method: "DELETE",
     headers: {
       "Tus-Resumable": "1.0.0",

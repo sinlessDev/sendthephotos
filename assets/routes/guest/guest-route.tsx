@@ -32,7 +32,7 @@ export function GuestRoute() {
 
     for (const file of e.target.files) {
       const upload = new tus.Upload(file, {
-        endpoint: "/files",
+        endpoint: "/tusd",
         metadata: {
           filename: file.name,
           mimeType: file.type,
@@ -114,13 +114,13 @@ export function GuestRoute() {
                   <Link href={`~/${eventID}/gallery/${upload.id}`}>
                     {upload.metadata.mimeType.startsWith("image/") ? (
                       <img
-                        src={`/files/${upload.id}`}
+                        src={`/tusd/${upload.id}`}
                         alt={upload.metadata.filename}
                         className="rounded-lg"
                       />
                     ) : (
                       <video
-                        src={`/files/${upload.id}`}
+                        src={`/tusd/${upload.id}`}
                         className="rounded-lg"
                         autoPlay
                         muted
@@ -227,13 +227,13 @@ export function GalleryRoute() {
       <div className="max-w-lg h-full mx-auto w-full relative">
         {upload.metadata.mimeType.startsWith("image/") ? (
           <img
-            src={`/files/${uploadID}`}
+            src={`/tusd/${uploadID}`}
             alt={uploadID}
             className="h-full w-full object-contain"
           />
         ) : (
           <video
-            src={`/files/${uploadID}`}
+            src={`/tusd/${uploadID}`}
             className="h-full w-full object-contain"
             controls
           />
