@@ -1,12 +1,12 @@
 import express, { Router } from "express";
+import { createProxyMiddleware } from "http-proxy-middleware";
+import morgan from "morgan";
+import path from "node:path";
 import { type Config } from "./config.ts";
 import type { DB } from "./db.ts";
 import { createEventsRouter } from "./routers/events-router.ts";
 import { createTusdRouter } from "./routers/tusd-router.ts";
 import { createUploadsRouter } from "./routers/uploads-router.ts";
-import path from "node:path";
-import morgan from "morgan";
-import { createProxyMiddleware } from "http-proxy-middleware";
 
 function createAPIRouter(db: DB, config: Config) {
   const router = Router();

@@ -26,5 +26,5 @@ createRoot(rootEl).render(
         <GuestRoute />
       </Route>
     </Switch>
-  </StrictMode>,
+  </StrictMode>
 );

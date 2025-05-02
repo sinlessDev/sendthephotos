@@ -37,7 +37,7 @@ export async function getUploadMetadata(db: DB, id: string) {
 export async function updateUploadVisibility(
   db: DB,
   id: string,
-  visible: boolean,
+  visible: boolean
 ) {
   await db
     .update(uploads)

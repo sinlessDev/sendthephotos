@@ -36,7 +36,7 @@ export async function mustFindEventByID(db: DB, eventID: string) {
 
   const totalUploadsCount = event.uploads.length;
   const videoUploadsCount = event.uploads.filter((upload) =>
-    upload.metadata.mimeType.startsWith("video/")
+    upload.metadata.mimeType.startsWith("video/"),
   ).length;
   const photoUploadsCount = totalUploadsCount - videoUploadsCount;
 

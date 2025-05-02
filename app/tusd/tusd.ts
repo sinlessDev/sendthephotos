@@ -66,7 +66,7 @@ export function createTusd(db: DB) {
     if (hookRequest.output.Type === "pre-create") {
       const eventPaid = await getEventPaid(
         db,
-        hookRequest.output.Event.Upload.MetaData.eventID
+        hookRequest.output.Event.Upload.MetaData.eventID,
       );
 
       if (eventPaid) {
@@ -76,7 +76,7 @@ export function createTusd(db: DB) {
 
       const [count, batches] = await getUniqBatches(
         db,
-        hookRequest.output.Event.Upload.MetaData.eventID
+        hookRequest.output.Event.Upload.MetaData.eventID,
       );
 
       if (

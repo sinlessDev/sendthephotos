@@ -11,7 +11,7 @@ type CreateEventArgs = {
 };
 
 export async function createEvent(
-  args: CreateEventArgs
+  args: CreateEventArgs,
 ): Promise<CreateEventResponse> {
   const response = await fetch("/api/events", {
     method: "POST",
@@ -63,17 +63,17 @@ export function useAllEventsShape() {
     ...event,
     stats: {
       totalUploadsCount: uploads.data.filter(
-        (upload) => upload.event_id === event.id
+        (upload) => upload.event_id === event.id,
       ).length,
       videoUploadsCount: uploads.data.filter(
         (upload) =>
           upload.event_id === event.id &&
-          upload.metadata.mimeType.startsWith("video/")
+          upload.metadata.mimeType.startsWith("video/"),
       ).length,
       photoUploadsCount: uploads.data.filter(
         (upload) =>
           upload.event_id === event.id &&
-          upload.metadata.mimeType.startsWith("image/")
+          upload.metadata.mimeType.startsWith("image/"),
       ).length,
     },
     lastUpload:
@@ -119,10 +119,10 @@ export function useEventShape(eventID: string) {
     stats: {
       totalUploadsCount: uploads.data.length,
       videoUploadsCount: uploads.data.filter((upload) =>
-        upload.metadata.mimeType.startsWith("video/")
+        upload.metadata.mimeType.startsWith("video/"),
       ).length,
       photoUploadsCount: uploads.data.filter((upload) =>
-        upload.metadata.mimeType.startsWith("image/")
+        upload.metadata.mimeType.startsWith("image/"),
       ).length,
     },
   };

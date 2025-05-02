@@ -1,8 +1,8 @@
 import { Router } from "express";
+import * as v from "valibot";
 import type { DB } from "../db.ts";
 import { getEventPaid, getUniqBatches } from "../repos/events-repo.ts";
 import { deleteUpload, insertUpload } from "../repos/uploads-repo.ts";
-import * as v from "valibot";
 
 export const preCreateRequestSchema = v.object({
   Type: v.literal("pre-create"),
@@ -61,7 +61,7 @@ export function createTusdRouter(db: DB) {
     if (hookRequest.output.Type === "pre-create") {
       const eventPaid = await getEventPaid(
         db,
-        hookRequest.output.Event.Upload.MetaData.eventID,
+        hookRequest.output.Event.Upload.MetaData.eventID
       );
 
       if (eventPaid) {
@@ -71,7 +71,7 @@ export function createTusdRouter(db: DB) {
 
       const [count, batches] = await getUniqBatches(
         db,
-        hookRequest.output.Event.Upload.MetaData.eventID,
+        hookRequest.output.Event.Upload.MetaData.eventID
       );
 
       if (

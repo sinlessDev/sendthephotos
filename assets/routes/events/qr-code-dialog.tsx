@@ -1,9 +1,9 @@
 import {
-  DialogPortal,
-  DialogContent,
   DialogClose,
-  DialogTitle,
+  DialogContent,
   DialogDescription,
+  DialogPortal,
+  DialogTitle,
 } from "@radix-ui/react-dialog";
 export {
   Dialog as QrCodeDialog,

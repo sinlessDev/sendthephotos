@@ -9,8 +9,8 @@ import {
 } from "node:crypto";
 import { promisify } from "node:util";
 import * as v from "valibot";
-import { users, type DB } from "../db.ts";
 import type { Config } from "../config.ts";
+import { users, type DB } from "../db.ts";
 
 const scryptAsync = promisify<BinaryLike, BinaryLike, number, Buffer>(scrypt);
 
